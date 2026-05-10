@@ -1,0 +1,23 @@
+To create local ubuntu cloud vm:
+
+```
+./ubuntu-cloud-vm.sh
+```
+
+To bootstrap the kubernetes cluster:
+
+```
+./bootstrap.sh
+```
+
+To tunnel the argocd server:
+
+```
+ssh -N -L 8080:127.0.0.1:8080 ubuntu@192.168.122.190
+```
+
+To access the argocd server:
+
+```
+http://localhost:8080
+```

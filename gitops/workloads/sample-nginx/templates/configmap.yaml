@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "sample-nginx.fullname" . }}-html
+  labels:
+    {{- include "sample-nginx.labels" . | nindent 4 }}
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+      <head><meta charset="utf-8"/><title>Hello</title></head>
+      <body><h1>Hello, world</h1></body>
+    </html>

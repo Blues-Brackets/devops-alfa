@@ -1,0 +1,4 @@
+# Set at bootstrap via helm --set (see scripts/bootstrap.sh).
+git:
+  repoURL: ""
+  revision: HEAD
