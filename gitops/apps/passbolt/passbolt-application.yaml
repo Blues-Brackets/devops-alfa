@@ -1,0 +1,96 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: passbolt
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://download.passbolt.com/charts/passbolt
+    chart: passbolt
+    targetRevision: "2.1.0"
+    helm:
+      releaseName: passbolt
+      valuesObject:
+        fullnameOverride: passbolt
+        replicaCount: 1
+
+        app:
+          cache:
+            redis:
+              enabled: true
+              sentinelProxy:
+                enabled: true
+
+        passboltEnv:
+          plain:
+            APP_FULL_BASE_URL: https://passbolt.bb.bluesbrackets.com
+            PASSBOLT_KEY_EMAIL: tools.for.blues@gmail.com
+            PASSBOLT_SSL_FORCE: false
+            EMAIL_DEFAULT_FROM: tools.for.blues@gmail.com
+            EMAIL_DEFAULT_FROM_NAME: Passbolt
+            EMAIL_TRANSPORT_DEFAULT_HOST: in-v3.mailjet.com
+            EMAIL_TRANSPORT_DEFAULT_PORT: 587
+            EMAIL_TRANSPORT_DEFAULT_TLS: true
+            CACHE_DEFAULT_HOST: "127.0.0.1"
+            CACHE_CAKECORE_HOST: "127.0.0.1"
+            CACHE_CAKEMODEL_HOST: "127.0.0.1"
+          secretName: passbolt-env-secret
+
+        mariadb:
+          architecture: standalone
+          auth:
+            database: passbolt
+            username: passbolt
+            existingSecret: passbolt-env-secret
+          global:
+            security:
+              allowInsecureImages: true
+          image:
+            repository: bitnamilegacy/mariadb
+          primary:
+            persistence:
+              enabled: true
+              size: 8Gi
+
+        redis:
+          auth:
+            enabled: true
+            existingSecret: passbolt-env-secret
+            existingSecretPasswordKey: redis-password
+          global:
+            security:
+              allowInsecureImages: true
+          image:
+            repository: bitnamilegacy/redis
+          sentinel:
+            enabled: true
+            image:
+              repository: bitnamilegacy/redis-sentinel
+
+        service:
+          type: ClusterIP
+          ports:
+            http:
+              port: 80
+              targetPort: 80
+            https:
+              port: 443
+              targetPort: 443
+
+        ingress:
+          enabled: false
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: passbolt
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
