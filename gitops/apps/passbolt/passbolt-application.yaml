@@ -28,7 +28,7 @@ spec:
 
         passboltEnv:
           plain:
-            APP_FULL_BASE_URL: https://passbolt.bb.bluesbrackets.com
+            APP_FULL_BASE_URL: https://passbolt.alfa.bluesbrackets.com
             PASSBOLT_KEY_EMAIL: tools.for.blues@gmail.com
             PASSBOLT_SSL_FORCE: false
             EMAIL_DEFAULT_FROM: tools.for.blues@gmail.com
