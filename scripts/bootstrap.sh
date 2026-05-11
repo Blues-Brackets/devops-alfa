@@ -2,19 +2,20 @@
 set -euo pipefail
 
 if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
-  echo "Usage: $0 <git_repo_url> <git_username> <git_token>" >&2
+  echo "Usage: $0 <git_repo_url> <git_username> <git_token> <env>" >&2
   echo "Environment: GIT_REVISION (default HEAD) sets Argo CD source.targetRevision." >&2
   exit 0
 fi
 
-if [[ "$#" -ne 3 ]]; then
-  echo "Usage: $0 <git_repo_url> <git_username> <git_token>" >&2
+if [[ "$#" -ne 4 ]]; then
+  echo "Usage: $0 <git_repo_url> <git_username> <git_token> <env>" >&2
   exit 1
 fi
 
 export GIT_REPO_URL="$1"
 export GIT_USERNAME="$2"
 export GIT_TOKEN="$3"
+export GITOPS_ENV="$4"
 
 apt update && apt upgrade -y
 apt install -y curl git
@@ -56,7 +57,7 @@ spec:
   source:
     repoURL: ${GIT_REPO_URL}
     targetRevision: ${GIT_REVISION:-HEAD}
-    path: gitops
+    path: gitops/env/${GITOPS_ENV}
     kustomize: {}
   destination:
     server: https://kubernetes.default.svc

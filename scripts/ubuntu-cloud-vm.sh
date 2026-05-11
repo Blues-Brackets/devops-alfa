@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Fedora: KVM/libvirt + Ubuntu cloud image + cloud-init (NoCloud).
-# Ref: https://docs.fedoraproject.org/en-US/quick-docs/virtualization-getting-started/
 
 set -euo pipefail
 
@@ -116,15 +114,27 @@ domain_exists() {
   sudo virsh dominfo "$VM_NAME" >/dev/null 2>&1
 }
 
+remove_existing_vm() {
+  if ! domain_exists; then
+    return
+  fi
+
+  log "Domain '$VM_NAME' already exists. Recreating from scratch ..."
+
+  sudo virsh destroy "$VM_NAME" >/dev/null 2>&1 || true
+
+  if ! sudo virsh undefine "$VM_NAME" --remove-all-storage --nvram; then
+    sudo virsh undefine "$VM_NAME" --remove-all-storage || true
+  fi
+
+  rm -f "$VM_DIR/$UBUNTU_IMG" "$VM_DIR/seed.iso" "$VM_DIR/user-data" "$VM_DIR/meta-data"
+}
+
 create_vm() {
   local img seed osv
   img="$(realpath "$VM_DIR/$UBUNTU_IMG")"
   seed="$(realpath "$VM_DIR/seed.iso")"
   osv="$(pick_os_variant)"
-  if domain_exists; then
-    log "Domain '$VM_NAME' already exists. Remove it first: sudo virsh undefine '$VM_NAME' --remove-all-storage (or adjust VM_NAME)."
-    return 0
-  fi
   log "Creating VM '$VM_NAME' (os-variant=$osv) ..."
   sudo virt-install \
     --name "$VM_NAME" \
@@ -153,6 +163,9 @@ print_next_steps() {
   log "  sudo virsh start $VM_NAME"
   log "  sudo virsh shutdown $VM_NAME"
   log "  sudo virsh console $VM_NAME"
+  log "  sudo virsh domifaddr $VM_NAME"
+  log "  ssh ubuntu@<VM_IP>"
+  log "  ssh -N -L 8080:127.0.0.1:8080 ubuntu@<VM_IP>"
 }
 
 main() {
@@ -169,6 +182,7 @@ main() {
     cmd_exists "$b" || die "Missing command: $b (install host packages or fix PATH)."
   done
 
+  remove_existing_vm
   ensure_ssh_key
   download_image
   write_cloud_init
