@@ -13,7 +13,6 @@ spec:
     repoURL: https://github.com/Blues-Brackets/devops-alfa.git
     targetRevision: HEAD
     path: gitops/apps/qrly
-    kustomize: {}
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
