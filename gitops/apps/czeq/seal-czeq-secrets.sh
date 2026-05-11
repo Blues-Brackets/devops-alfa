@@ -96,9 +96,9 @@ kubectl --kubeconfig "$KUBECONFIG" create secret generic ghcr-pull-secret \
 > "$BASE_DIR/czeq-ghcr-sealed-secret.yaml"
 
 if [[ -n "${GITHUB_TOKEN:-}" ]]; then
-  echo "==> Sealing github-token..."
+  echo "==> Sealing github-token (namespace: argocd)..."
   kubectl --kubeconfig "$KUBECONFIG" create secret generic github-token \
-    --namespace="$NAMESPACE" \
+    --namespace="argocd" \
     --from-literal=token="$GITHUB_TOKEN" \
     --dry-run=client -o yaml \
   | kubeseal --cert "$CERT_FILE" --format yaml \
