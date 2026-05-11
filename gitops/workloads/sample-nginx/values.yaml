@@ -1,7 +1,0 @@
-image:
-  repository: nginx
-  tag: alpine
-  pullPolicy: IfNotPresent
-
-service:
-  port: 80

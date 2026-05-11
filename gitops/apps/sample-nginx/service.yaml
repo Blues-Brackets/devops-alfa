@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-nginx
+  labels:
+    app.kubernetes.io/name: sample-nginx
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: sample-nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

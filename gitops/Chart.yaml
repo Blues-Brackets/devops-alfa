@@ -1,5 +1,0 @@
-apiVersion: v2
-name: cluster-gitops
-description: App of apps — renders Argo CD Application manifests (set git.repoURL at install time)
-type: application
-version: 0.1.0

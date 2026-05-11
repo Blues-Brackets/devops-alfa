@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-nginx
+  labels:
+    app.kubernetes.io/name: sample-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sample-nginx
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sample-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+              readOnly: true
+      volumes:
+        - name: html
+          configMap:
+            name: sample-nginx-html
