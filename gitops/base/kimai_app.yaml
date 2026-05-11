@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: passbolt
+  name: kimai
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://github.com/Blues-Brackets/devops-alfa.git
     targetRevision: HEAD
-    path: gitops/apps/passbolt
+    path: gitops/apps/kimai
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
