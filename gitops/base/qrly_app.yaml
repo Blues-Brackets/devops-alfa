@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: qrly
+  name: qrly-base
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
