@@ -69,6 +69,10 @@ kubectl apply -n argocd \
 kubectl -n argocd rollout status deployment/argocd-server
 kubectl -n argocd rollout status deployment/argocd-repo-server
 
+kubectl -n argocd patch configmap argocd-cm \
+  --type merge \
+  -p '{"data":{"kustomize.buildOptions":"--load-restrictor LoadRestrictionsNone"}}'
+
 kubectl -n argocd create secret generic gitops-repo \
   --from-literal=type=git \
   --from-literal=url="$GIT_REPO_URL" \
