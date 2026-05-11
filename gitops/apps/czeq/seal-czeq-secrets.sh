@@ -61,7 +61,6 @@ kubectl --kubeconfig "$KUBECONFIG" create secret generic czeq-backend-secret \
   --namespace="$NAMESPACE" \
   --from-literal=ROOT_EMAIL="$BACKEND_ROOT_EMAIL" \
   --from-literal=ROOT_PASSWORD="$BACKEND_ROOT_PASSWORD" \
-  --from-literal=DATABASE_URL="postgresql://postgres:${BACKEND_DB_PASSWORD}@czeq-postgresql:5432/czeq" \
   --from-literal=BETTER_AUTH_SECRET="$BETTER_AUTH_SECRET" \
   --from-literal=GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID:-}" \
   --from-literal=GOOGLE_CLIENT_SECRET="${GOOGLE_CLIENT_SECRET:-}" \
@@ -76,7 +75,6 @@ kubectl --kubeconfig "$KUBECONFIG" create secret generic czeq-cms-secret \
   --namespace="$NAMESPACE" \
   --from-literal=ROOT_EMAIL="$CMS_ROOT_EMAIL" \
   --from-literal=ROOT_PASSWORD="$CMS_ROOT_PASSWORD" \
-  --from-literal=DATABASE_URL="postgresql://postgres:${CMS_DB_PASSWORD}@czeq-cms-postgresql:5432/czeq_cms" \
   --from-literal=PAYLOAD_SECRET="$PAYLOAD_SECRET" \
   --from-literal=S3_ACCESS_KEY="$MINIO_ROOT_USER" \
   --from-literal=S3_SECRET_KEY="$MINIO_ROOT_PASSWORD" \
