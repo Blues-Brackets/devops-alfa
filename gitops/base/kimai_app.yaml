@@ -32,7 +32,6 @@ spec:
           primary:
             persistence:
               enabled: true
-              size: 8Gi
         persistence:
           enabled: true
           size: 8Gi
