@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: passbolt
+  namespace: passbolt
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - passbolt.alfa.bluesbrackets.com
+      secretName: passbolt-tls
+  rules:
+    - host: passbolt.alfa.bluesbrackets.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: passbolt
+                port:
+                  number: 80

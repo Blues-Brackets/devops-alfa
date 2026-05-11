@@ -5,3 +5,4 @@ resources:
   - passbolt-sealed-secret.yaml
   - passbolt-gpg-sealed.yaml
   - passbolt-application.yaml
+  - passbolt-ingress.yaml
