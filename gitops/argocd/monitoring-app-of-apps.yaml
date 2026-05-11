@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sample-nginx
+  name: monitoring
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -10,11 +10,11 @@ spec:
   source:
     repoURL: https://github.com/Blues-Brackets/devops-alfa.git
     targetRevision: HEAD
-    path: gitops/apps/sample-nginx
+    path: gitops/apps/monitoring
     kustomize: {}
   destination:
     server: https://kubernetes.default.svc
-    namespace: demo
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true

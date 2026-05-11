@@ -1,0 +1,87 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: 22-logs
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: k8s-monitoring
+    targetRevision: ">=1.0.0 <2.0.0"
+    helm:
+      releaseName: k8s-monitoring
+      values: |
+        cluster:
+          name: alfa-dev
+
+        externalServices:
+          loki:
+            host: http://loki.observability.svc:3100
+            # No auth in dev; set basicAuth if needed
+            basicAuth:
+              username: ""
+              password: ""
+
+        # Disable metrics — kube-prometheus-stack already handles them
+        metrics:
+          enabled: false
+
+        # Enable log collection
+        logs:
+          enabled: true
+          pod_logs:
+            enabled: true
+          cluster_events:
+            enabled: true
+
+        # Disable tracing
+        traces:
+          enabled: false
+
+        # Disable profiling
+        profiles:
+          enabled: false
+
+        # Sub-charts: disable everything except Alloy for logs
+        prometheus-operator-crds:
+          enabled: false
+        kube-state-metrics:
+          enabled: false
+        prometheus-node-exporter:
+          enabled: false
+        grafana:
+          enabled: false
+        alloy-metrics:
+          enabled: false
+        alloy-logs:
+          enabled: true
+          alloy:
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                cpu: 200m
+                memory: 256Mi
+        alloy-events:
+          enabled: true
+        alloy-profiles:
+          enabled: false
+        opencost:
+          enabled: false
+        kepler:
+          enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,75 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: 20-monitoring
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: ">=60.0.0"
+    helm:
+      releaseName: kube-prometheus-stack
+      values: |
+        defaultRules:
+          create: true
+
+        alertmanager:
+          enabled: true
+
+        grafana:
+          enabled: true
+          adminPassword: changeme
+          defaultDashboardsEnabled: true
+          sidecar:
+            datasources:
+              enabled: true
+          additionalDataSources:
+            - name: Loki
+              type: loki
+              url: http://loki.observability.svc:3100
+              access: proxy
+              isDefault: false
+              jsonData:
+                maxLines: 1000
+
+        prometheus:
+          prometheusSpec:
+            retention: 7d
+            resources:
+              requests:
+                cpu: 200m
+                memory: 400Mi
+              limits:
+                cpu: 1000m
+                memory: 1500Mi
+
+        prometheusOperator:
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+
+        kubeStateMetrics:
+          enabled: true
+
+        nodeExporter:
+          enabled: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
