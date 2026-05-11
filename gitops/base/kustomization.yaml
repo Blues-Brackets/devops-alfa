@@ -5,3 +5,4 @@ resources:
   - monitoring_app.yaml
   - sealed_secrets_app.yaml
   - passbolt_app.yaml
+  - czeq_app.yaml

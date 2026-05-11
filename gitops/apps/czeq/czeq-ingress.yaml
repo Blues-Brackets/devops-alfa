@@ -1,0 +1,99 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: czeq-backend
+  namespace: czeq
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - api.czeq-test.bluesbrackets.com
+      secretName: czeq-backend-tls
+  rules:
+    - host: api.czeq-test.bluesbrackets.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: czeq-backend
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: czeq-cms
+  namespace: czeq
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - admin.czeq-test.bluesbrackets.com
+      secretName: czeq-cms-tls
+  rules:
+    - host: admin.czeq-test.bluesbrackets.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: czeq-cms
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: czeq-mailhog
+  namespace: czeq
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - mailhog.czeq-test.bluesbrackets.com
+      secretName: czeq-mailhog-tls
+  rules:
+    - host: mailhog.czeq-test.bluesbrackets.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: czeq-backend-mailhog
+                port:
+                  number: 8025
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: czeq-minio
+  namespace: czeq
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - minio.czeq-test.bluesbrackets.com
+      secretName: czeq-minio-tls
+  rules:
+    - host: minio.czeq-test.bluesbrackets.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: czeq-cms-minio
+                port:
+                  number: 9001
