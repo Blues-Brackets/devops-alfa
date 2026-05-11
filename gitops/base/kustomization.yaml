@@ -6,3 +6,4 @@ resources:
   - sealed_secrets_app.yaml
   - passbolt_app.yaml
   - czeq_app.yaml
+  - kimai_app.yaml

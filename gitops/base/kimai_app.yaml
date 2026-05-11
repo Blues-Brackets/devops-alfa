@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kimai
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://robjuz.github.io/helm-charts/
+    chart: kimai2
+    targetRevision: "4.3.12"
+    helm:
+      releaseName: kimai
+      valuesObject:
+        replicaCount: 1
+        kimaiEnvironment: prod
+        service:
+          type: ClusterIP
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          hostname: kimai.alfa.bluesbrackets.com
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+          tls: true
+        mariadb:
+          enabled: true
+          primary:
+            persistence:
+              enabled: true
+        persistence:
+          enabled: true
+          size: 8Gi
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kimai
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
