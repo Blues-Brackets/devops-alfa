@@ -10,7 +10,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Blues-Brackets/qrly.git
+    repoURL: git@github.com:Blues-Brackets/qrly.git
     path: helm/qrly
     targetRevision: main
     helm:
