@@ -1,0 +1,138 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: czeq
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Blues-Brackets/czeq-backend.git
+    targetRevision: HEAD
+    path: helm
+    helm:
+      releaseName: czeq
+      valuesObject:
+        namespace: czeq
+
+        backend:
+          replicaCount: 1
+          existingSecret: czeq-backend-secret
+          image:
+            repository: ghcr.io/blues-brackets/czeq-backend/backend
+            tag: master
+            pullPolicy: Always
+          service:
+            type: ClusterIP
+            port: 3000
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          config:
+            nodeEnv: production
+            port: 3000
+            corsOrigin: "https://admin.czeq-test.bluesbrackets.com"
+            trustedOrigin: "https://admin.czeq-test.bluesbrackets.com"
+            appBaseUrl: "https://api.czeq-test.bluesbrackets.com"
+          smtp:
+            port: 1025
+            secure: false
+          rootAdmin:
+            name: Root Admin
+          postgresql:
+            enabled: true
+            auth:
+              username: postgres
+              database: czeq
+            persistence:
+              size: 5Gi
+          mailhog:
+            enabled: true
+            replicaCount: 1
+            ingress:
+              enabled: false
+          betterAuth:
+            secret: ""
+          google:
+            clientId: ""
+            clientSecret: ""
+          apple:
+            clientId: ""
+            serviceId: ""
+            teamId: ""
+            keyId: ""
+            privateKey: |
+          mobile:
+            ios:
+              bundleId: ""
+              teamId: ""
+            android:
+              packageName: ""
+              sha256Fingerprint: ""
+          ingress:
+            enabled: false
+
+        cms:
+          replicaCount: 1
+          existingSecret: czeq-cms-secret
+          image:
+            repository: ghcr.io/blues-brackets/czeq-backend/cms
+            tag: master
+            pullPolicy: Always
+          service:
+            type: ClusterIP
+            port: 3000
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+          config:
+            port: 3000
+          rootAdmin: {}
+          payload:
+            secret: ""
+          postgresql:
+            enabled: true
+            host: ""
+            username: postgres
+            database: czeq_cms
+            port: 5432
+            persistence:
+              size: 5Gi
+          s3:
+            bucket: czeq-media
+            region: us-east-1
+            endpoint: ""
+          minio:
+            enabled: true
+            rootUser: ""
+            rootPassword: ""
+            bucket: czeq-media
+            region: us-east-1
+            persistence:
+              size: 5Gi
+            publicUrl: "https://minio.czeq-test.bluesbrackets.com"
+            service:
+              type: ClusterIP
+              nodePort: null
+            ingress:
+              enabled: false
+          ingress:
+            enabled: false
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: czeq
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions: []
