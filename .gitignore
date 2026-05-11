@@ -1,2 +1,4 @@
 .env
 .kubeconfig
+.kubeconfig-old
+*.sql
