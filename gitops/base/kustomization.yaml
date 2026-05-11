@@ -4,3 +4,4 @@ resources:
   - sample_nginx_app.yaml
   - monitoring_app.yaml
   - sealed_secrets_app.yaml
+  - passbolt_app.yaml
