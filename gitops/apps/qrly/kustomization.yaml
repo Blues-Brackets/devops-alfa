@@ -4,3 +4,5 @@ resources:
   - qrly-namespace.yaml
   - qrly-database-sealed-secret.yaml
   - qrly-application.yaml
+  - qrly-ghcr-sealed-secret.yaml
+  - qrly-github-token-sealed-secret.yaml
