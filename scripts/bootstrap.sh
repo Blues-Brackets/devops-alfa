@@ -18,12 +18,46 @@ export GIT_TOKEN="$3"
 export GITOPS_ENV="$4"
 
 apt update && apt upgrade -y
-apt install -y curl git
+apt install -y curl git unattended-upgrades apt-listchanges
+
+cat >/etc/apt/apt.conf.d/20auto-upgrades <<'EOF'
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Unattended-Upgrade "1";
+EOF
+cat >/etc/apt/apt.conf.d/50unattended-upgrades <<'EOF'
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "04:00";
+EOF
+dpkg-reconfigure -f noninteractive unattended-upgrades
 
 curl -sfL https://get.k3s.io | sh -
 
 kubectl get nodes
 kubectl get pods -A
+
+kubectl apply -f https://github.com/rancher/system-upgrade-controller/releases/latest/download/crd.yaml
+kubectl apply -f https://github.com/rancher/system-upgrade-controller/releases/latest/download/system-upgrade-controller.yaml
+kubectl wait --for=condition=Established --timeout=120s crd/plans.upgrade.cattle.io
+kubectl apply -f - <<'EOF'
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: k3s-server
+  namespace: system-upgrade
+spec:
+  concurrency: 1
+  cordon: true
+  nodeSelector:
+    matchExpressions:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+  serviceAccountName: system-upgrade
+  upgrade:
+    image: rancher/k3s-upgrade
+  channel: https://update.k3s.io/v1-release/channels/stable
+EOF
 
 kubectl create namespace argocd
 
