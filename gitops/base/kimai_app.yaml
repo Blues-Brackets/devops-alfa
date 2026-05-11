@@ -22,7 +22,12 @@ spec:
           type: ClusterIP
         ingress:
           enabled: true
+          ingressClassName: traefik
           hostname: kimai.alfa.bluesbrackets.com
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+          tls: true
+        mariadb:
           primary:
             persistence:
               enabled: true
