@@ -1,7 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - sample-nginx-application.yaml
-  - monitoring-app-of-apps.yaml
-  - sealed-secrets-namespace.yaml
-  - sealed-secrets-application.yaml
+  - sample_nginx_app.yaml
+  - monitoring_app.yaml
+  - sealed_secrets_app.yaml

@@ -21,3 +21,12 @@ To access the argocd server:
 ```
 http://localhost:8080
 ```
+
+To access remote cluster tools:
+
+```
+kubectl --kubeconfig .kubeconfig get nodes
+kubectl --kubeconfig .kubeconfig get pods -A
+kubectl --kubeconfig .kubeconfig port-forward svc/argocd-server -n argocd 8080:443 --address 0.0.0.0
+kubectl --kubeconfig .kubeconfig -n observability port-forward svc/kube-prometheus-stack-grafana 3000:80 --address 0.0.0.0
+```
