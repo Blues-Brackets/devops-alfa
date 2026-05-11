@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - passbolt-namespace.yaml
   - passbolt-sealed-secret.yaml
+  - passbolt-gpg-sealed.yaml
   - passbolt-application.yaml
