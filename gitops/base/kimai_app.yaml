@@ -16,7 +16,7 @@ spec:
     helm:
       releaseName: kimai
       valuesObject:
-        replicaCount: 0
+        replicaCount: 1
         kimaiEnvironment: prod
         service:
           type: ClusterIP
@@ -28,6 +28,7 @@ spec:
             cert-manager.io/cluster-issuer: letsencrypt-prod
           tls: true
         mariadb:
+          enabled: true
           primary:
             persistence:
               enabled: true
