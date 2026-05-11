@@ -85,10 +85,7 @@ spec:
         ingress:
           enabled: false
 
-        gpgServerKeyInK8sSecret:
-          keyName: passbolt-sec-gpg
-          publicKeyName: serverkey.asc
-          privateKeyName: serverkey_private.asc
+        gpgExistingSecret: passbolt-sec-gpg
 
   destination:
     server: https://kubernetes.default.svc
