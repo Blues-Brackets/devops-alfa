@@ -7,5 +7,5 @@ resources:
   - czeq-ghcr-sealed-secret.yaml
   - czeq-github-token-sealed-secret.yaml
   - czeq-ingress.yaml
-  - czeq-application.yaml
+  # - czeq-application.yaml  # disabled until helm/ folder exists in czeq-backend repo
   - czeq-pr-applicationset.yaml
