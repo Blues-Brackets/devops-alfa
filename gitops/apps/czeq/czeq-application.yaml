@@ -36,9 +36,9 @@ spec:
           config:
             nodeEnv: production
             port: 3000
-            corsOrigin: "https://admin.czeq-test.bluesbrackets.com"
-            trustedOrigin: "https://admin.czeq-test.bluesbrackets.com"
-            appBaseUrl: "https://api.czeq-test.bluesbrackets.com"
+            corsOrigin: "https://czeq-cms.alfa.bluesbrackets.com"
+            trustedOrigin: "https://czeq-cms.alfa.bluesbrackets.com"
+            appBaseUrl: "https://czeq-api.alfa.bluesbrackets.com"
           smtp:
             port: 1025
             secure: false
@@ -119,7 +119,7 @@ spec:
             region: us-east-1
             persistence:
               size: 5Gi
-            publicUrl: "https://minio.czeq-test.bluesbrackets.com"
+            publicUrl: "https://czeq-minio.alfa.bluesbrackets.com"
             service:
               type: ClusterIP
               nodePort: null

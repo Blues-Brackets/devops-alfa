@@ -4,7 +4,7 @@ metadata:
   name: czeq-pr
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: '3'
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   generators:
     - pullRequest:
@@ -24,7 +24,7 @@ spec:
       project: default
       source:
         repoURL: git@github.com:Blues-Brackets/czeq-backend.git
-        targetRevision: '{{head_sha}}'
+        targetRevision: "{{head_sha}}"
         path: helm
         helm:
           releaseName: czeq-pr-{{number}}
@@ -36,7 +36,7 @@ spec:
               existingSecret: czeq-backend-secret
               image:
                 repository: ghcr.io/blues-brackets/czeq-backend/backend
-                tag: 'pr-{{number}}'
+                tag: "pr-{{number}}"
                 pullPolicy: Always
               service:
                 type: ClusterIP
@@ -51,9 +51,9 @@ spec:
               config:
                 nodeEnv: production
                 port: 3000
-                corsOrigin: 'https://admin.pr-{{number}}.czeq-test.bluesbrackets.com'
-                trustedOrigin: 'https://admin.pr-{{number}}.czeq-test.bluesbrackets.com'
-                appBaseUrl: 'https://api.pr-{{number}}.czeq-test.bluesbrackets.com'
+                corsOrigin: "https://czeq-cms-pr-{{number}}.alfa.bluesbrackets.com"
+                trustedOrigin: "https://czeq-cms-pr-{{number}}.alfa.bluesbrackets.com"
+                appBaseUrl: "https://czeq-api-pr-{{number}}.alfa.bluesbrackets.com"
               smtp:
                 port: 1025
                 secure: false
@@ -76,27 +76,27 @@ spec:
                     traefik.ingress.kubernetes.io/router.entrypoints: websecure
                     cert-manager.io/cluster-issuer: letsencrypt-prod
                   hosts:
-                    - host: mailhog.pr-{{number}}.czeq-test.bluesbrackets.com
+                    - host: czeq-mailhog-pr-{{number}}.alfa.bluesbrackets.com
                       paths:
                         - path: /
                           pathType: Prefix
                   tls:
                     - secretName: mailhog-pr-{{number}}-tls
                       hosts:
-                        - mailhog.pr-{{number}}.czeq-test.bluesbrackets.com
+                        - czeq-mailhog-pr-{{number}}.alfa.bluesbrackets.com
               betterAuth:
-                secret: ''
+                secret: ""
               google:
-                clientId: ''
-                clientSecret: ''
+                clientId: ""
+                clientSecret: ""
               apple:
-                clientId: ''
-                serviceId: ''
-                teamId: ''
-                keyId: ''
+                clientId: ""
+                serviceId: ""
+                teamId: ""
+                keyId: ""
                 privateKey: |
               android:
-                packageName: ''
+                packageName: ""
               ingress:
                 enabled: true
                 className: traefik
@@ -104,21 +104,21 @@ spec:
                   traefik.ingress.kubernetes.io/router.entrypoints: websecure
                   cert-manager.io/cluster-issuer: letsencrypt-prod
                 hosts:
-                  - host: api.pr-{{number}}.czeq-test.bluesbrackets.com
+                  - host: czeq-api-pr-{{number}}.alfa.bluesbrackets.com
                     paths:
                       - path: /
                         pathType: Prefix
                 tls:
                   - secretName: api-pr-{{number}}-tls
                     hosts:
-                      - api.pr-{{number}}.czeq-test.bluesbrackets.com
+                      - czeq-api-pr-{{number}}.alfa.bluesbrackets.com
 
             cms:
               replicaCount: 1
               existingSecret: czeq-cms-secret
               image:
                 repository: ghcr.io/blues-brackets/czeq-backend/cms
-                tag: 'pr-{{number}}'
+                tag: "pr-{{number}}"
                 pullPolicy: Always
               service:
                 type: ClusterIP
@@ -134,10 +134,10 @@ spec:
                 port: 3000
               rootAdmin: {}
               payload:
-                secret: ''
+                secret: ""
               postgresql:
                 enabled: true
-                host: ''
+                host: ""
                 username: postgres
                 database: czeq_cms
                 port: 5432
@@ -146,16 +146,16 @@ spec:
               s3:
                 bucket: czeq-media-pr-{{number}}
                 region: us-east-1
-                endpoint: ''
+                endpoint: ""
               minio:
                 enabled: true
-                rootUser: ''
-                rootPassword: ''
+                rootUser: ""
+                rootPassword: ""
                 bucket: czeq-media-pr-{{number}}
                 region: us-east-1
                 persistence:
                   size: 2Gi
-                publicUrl: 'https://minio.pr-{{number}}.czeq-test.bluesbrackets.com'
+                publicUrl: "https://czeq-minio-pr-{{number}}.alfa.bluesbrackets.com"
                 service:
                   type: ClusterIP
                   nodePort: null
@@ -165,7 +165,7 @@ spec:
                   annotations:
                     traefik.ingress.kubernetes.io/router.entrypoints: websecure
                     cert-manager.io/cluster-issuer: letsencrypt-prod
-                  host: minio.pr-{{number}}.czeq-test.bluesbrackets.com
+                  host: czeq-minio-pr-{{number}}.alfa.bluesbrackets.com
                   tls:
                     secretName: minio-pr-{{number}}-tls
               ingress:
@@ -175,14 +175,14 @@ spec:
                   traefik.ingress.kubernetes.io/router.entrypoints: websecure
                   cert-manager.io/cluster-issuer: letsencrypt-prod
                 hosts:
-                  - host: admin.pr-{{number}}.czeq-test.bluesbrackets.com
+                  - host: czeq-cms-pr-{{number}}.alfa.bluesbrackets.com
                     paths:
                       - path: /
                         pathType: Prefix
                 tls:
                   - secretName: cms-pr-{{number}}-tls
                     hosts:
-                      - admin.pr-{{number}}.czeq-test.bluesbrackets.com
+                      - czeq-cms-pr-{{number}}.alfa.bluesbrackets.com
 
       destination:
         server: https://kubernetes.default.svc
