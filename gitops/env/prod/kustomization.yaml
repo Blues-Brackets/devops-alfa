@@ -2,6 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
+  - cert-manager-app.yaml
+  - letsencrypt-clusterissuer.yaml
+  - sample-nginx-ingress.yaml
   - argocd-cm-local-user.yaml
   - argocd-rbac-local-admin.yaml
   - argocd-blues-password-sealedsecret.yaml
