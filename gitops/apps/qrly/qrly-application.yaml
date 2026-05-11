@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: qrly
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Blues-Brackets/qrly.git
+    path: helm/qrly
+    targetRevision: main
+    helm:
+      releaseName: qrly
+      valuesObject:
+        imageTag: sha-4e45212
+        imagePullSecrets: ghcr-credentials
+        postgres:
+          enabled: false
+        database:
+          existingSecret: qrly-database-secret
+          existingSecretKey: DATABASE_URL
+        ingress:
+          enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: qrly
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false

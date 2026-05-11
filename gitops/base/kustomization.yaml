@@ -7,3 +7,4 @@ resources:
   - passbolt_app.yaml
   - czeq_app.yaml
   - kimai_app.yaml
+  - qrly_app.yaml
