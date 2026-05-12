@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bluesbrackets-ingress
+  namespace: bluesbrackets
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: bluesbrackets-tls
+      hosts:
+        - bluesbrackets.com
+        - www.bluesbrackets.com
+  rules:
+    - host: bluesbrackets.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bluesbrackets
+                port:
+                  number: 80
+    - host: www.bluesbrackets.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bluesbrackets
+                port:
+                  number: 80
