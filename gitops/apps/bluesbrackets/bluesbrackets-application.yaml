@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bluesbrackets
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Blues-Brackets/bluesbrackets.git
+    path: helm/bluesbrackets
+    targetRevision: master
+    helm:
+      releaseName: bluesbrackets
+      valuesObject:
+        replicaCount: 1
+        imagePullSecrets: ghcr-credentials
+        image:
+          repository: ghcr.io/blues-brackets/bluesbrackets
+          tag: sha-e8b282f
+          pullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: bluesbrackets
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
