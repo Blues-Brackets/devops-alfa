@@ -25,6 +25,8 @@ spec:
           existingSecretKey: DATABASE_URL
         ingress:
           enabled: false
+        landing:
+          replicaCount: 0
   destination:
     server: https://kubernetes.default.svc
     namespace: qrly
