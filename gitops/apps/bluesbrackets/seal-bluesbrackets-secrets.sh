@@ -33,9 +33,9 @@ kubeseal --fetch-cert \
   --kubeconfig "$KUBECONFIG" \
   > "$CERT_FILE"
 
-echo "==> Sealing ghcr-credentials..."
+echo "==> Sealing ghcr-pull-secret..."
 DOCKER_CONFIG_JSON="{\"auths\":{\"ghcr.io\":{\"auth\":\"${GHCR_AUTH}\"}}}"
-kubectl --kubeconfig "$KUBECONFIG" create secret generic ghcr-credentials \
+kubectl --kubeconfig "$KUBECONFIG" create secret generic ghcr-pull-secret \
   --namespace="$NAMESPACE" \
   --from-literal=.dockerconfigjson="$DOCKER_CONFIG_JSON" \
   --type=kubernetes.io/dockerconfigjson \
