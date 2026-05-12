@@ -8,4 +8,4 @@ resources:
   - czeq_app.yaml
   - kimai_app.yaml
   - qrly_app.yaml
-  # - bluesbrackets_app.yaml
+  - bluesbrackets_app.yaml
