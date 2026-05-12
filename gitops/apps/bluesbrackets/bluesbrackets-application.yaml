@@ -17,7 +17,7 @@ spec:
       releaseName: bluesbrackets
       valuesObject:
         replicaCount: 1
-        imagePullSecrets: ghcr-credentials
+        imagePullSecrets: ghcr-pull-secret
         image:
           repository: ghcr.io/blues-brackets/bluesbrackets
           tag: sha-e8b282f
