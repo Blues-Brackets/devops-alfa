@@ -10,7 +10,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: git@github.com:Blues-Brackets/programmer.git
+    repoURL: git@github.com:Blues-Brackets/spedimo.git
     path: programmer/helm/programmer-server
     targetRevision: helm
     helm:
