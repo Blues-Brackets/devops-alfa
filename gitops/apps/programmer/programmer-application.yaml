@@ -37,18 +37,10 @@ spec:
             enabled: true
             size: 8Gi
             storageClass: ""
-        ingress:
-          enabled: true
-          className: traefik
-          host: programmer.alfa.bluesbrackets.com
-          annotations:
-            cert-manager.io/cluster-issuer: letsencrypt-prod
-          tls:
-            - secretName: programmer-server-tls
-              hosts:
-                - programmer.alfa.bluesbrackets.com
         server:
           replicaCount: 1
+          env:
+            logLevel: debug
   destination:
     server: https://kubernetes.default.svc
     namespace: programmer
