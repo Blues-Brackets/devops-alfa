@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - programmer-namespace.yaml
+  - programmer-app-sealed-secret.yaml
+  - programmer-ghcr-sealed-secret.yaml
+  - programmer-github-token-sealed-secret.yaml
+  - programmer-application.yaml

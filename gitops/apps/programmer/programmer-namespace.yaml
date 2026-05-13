@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: programmer
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: default
+  namespace: programmer
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+imagePullSecrets:
+  - name: ghcr-pull-secret

@@ -9,3 +9,4 @@ resources:
   - kimai_app.yaml
   - qrly_app.yaml
   - bluesbrackets_app.yaml
+  - programmer_app.yaml

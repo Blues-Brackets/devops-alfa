@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: programmer-server
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Blues-Brackets/programmer.git
+    path: programmer/helm/programmer-server
+    targetRevision: helm
+    helm:
+      releaseName: programmer-server
+      valuesObject:
+        appSecret:
+          create: false
+        imagePullSecrets:
+          - name: ghcr-pull-secret
+        images:
+          server:
+            repository: ghcr.io/blues-brackets/programmer-server
+            tag: latest
+            pullPolicy: IfNotPresent
+          migrator:
+            repository: ghcr.io/blues-brackets/programmer-server-migrator
+            tag: latest
+            pullPolicy: IfNotPresent
+        postgresql:
+          auth:
+            username: postgres
+            database: programmer
+          persistence:
+            enabled: true
+            size: 8Gi
+            storageClass: ""
+        ingress:
+          enabled: true
+          className: traefik
+          host: programmer.alfa.bluesbrackets.com
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+          tls:
+            - secretName: programmer-server-tls
+              hosts:
+                - programmer.alfa.bluesbrackets.com
+        server:
+          replicaCount: 1
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: programmer
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
