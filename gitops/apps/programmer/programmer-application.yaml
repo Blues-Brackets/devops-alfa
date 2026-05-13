@@ -22,11 +22,11 @@ spec:
           - name: ghcr-pull-secret
         images:
           server:
-            repository: ghcr.io/blues-brackets/programmer-server
+            repository: ghcr.io/blues-brackets/spedimo/programmer-server
             tag: latest
             pullPolicy: IfNotPresent
           migrator:
-            repository: ghcr.io/blues-brackets/programmer-server-migrator
+            repository: ghcr.io/blues-brackets/spedimo/programmer-server-migrator
             tag: latest
             pullPolicy: IfNotPresent
         postgresql:
