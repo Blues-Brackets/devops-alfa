@@ -27,7 +27,7 @@ spec:
             pullPolicy: IfNotPresent
           migrator:
             repository: ghcr.io/blues-brackets/spedimo/programmer-server-migrator
-            tag: sha-5c3cd6a
+            tag: sha-1468808
             pullPolicy: IfNotPresent
         postgresql:
           auth:
