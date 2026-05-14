@@ -29,7 +29,8 @@ spec:
           persistence:
             type: pvc
             enabled: true
-          initChownData: false
+          initChownData:
+            enabled: false
           sidecar:
             datasources:
               enabled: true
