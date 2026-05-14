@@ -26,6 +26,9 @@ spec:
           enabled: true
           adminPassword: changeme
           defaultDashboardsEnabled: true
+          persistence:
+            type: pvc
+            enabled: true
           sidecar:
             datasources:
               enabled: true
