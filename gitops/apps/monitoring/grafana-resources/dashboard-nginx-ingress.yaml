@@ -1,7 +1,7 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
-  name: dashboard-nginx-ingress
+  name: dashboard-traefik-ingress
   namespace: observability
 spec:
   instanceSelector:
@@ -28,12 +28,12 @@ spec:
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "sum(rate(nginx_ingress_controller_requests[5m])) by (ingress, namespace)",
-              "legendFormat": "{{namespace}}/{{ingress}}",
+              "expr": "sum(rate(traefik_service_requests_total{service=~\"$service\"}[5m])) by (service)",
+              "legendFormat": "{{service}}",
               "refId": "A"
             }
           ],
-          "title": "Request Rate by Ingress",
+          "title": "Request Rate by Service",
           "type": "timeseries"
         },
         {
@@ -50,8 +50,8 @@ spec:
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "sum(rate(nginx_ingress_controller_requests{status=~\"[45].*\"}[5m])) by (ingress, namespace, status)",
-              "legendFormat": "{{namespace}}/{{ingress}} [{{status}}]",
+              "expr": "sum(rate(traefik_service_requests_total{code=~\"4..|5..\", service=~\"$service\"}[5m])) by (service, code)",
+              "legendFormat": "{{service}} [{{code}}]",
               "refId": "A"
             }
           ],
@@ -67,19 +67,19 @@ spec:
           "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
           "id": 3,
           "options": {
-            "legend": { "calcs": ["mean", "p95"], "displayMode": "table", "placement": "bottom" }
+            "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }
           },
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "histogram_quantile(0.95, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket[5m])) by (le, ingress, namespace))",
-              "legendFormat": "p95 {{namespace}}/{{ingress}}",
+              "expr": "histogram_quantile(0.95, sum(rate(traefik_service_request_duration_seconds_bucket{service=~\"$service\"}[5m])) by (le, service))",
+              "legendFormat": "p95 {{service}}",
               "refId": "A"
             },
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket[5m])) by (le, ingress, namespace))",
-              "legendFormat": "p99 {{namespace}}/{{ingress}}",
+              "expr": "histogram_quantile(0.99, sum(rate(traefik_service_request_duration_seconds_bucket{service=~\"$service\"}[5m])) by (le, service))",
+              "legendFormat": "p99 {{service}}",
               "refId": "B"
             }
           ],
@@ -94,17 +94,20 @@ spec:
           },
           "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
           "id": 4,
+          "options": {
+            "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }
+          },
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "sum(rate(nginx_ingress_controller_request_size_sum[5m])) by (ingress, namespace)",
-              "legendFormat": "IN {{namespace}}/{{ingress}}",
+              "expr": "sum(rate(traefik_service_requests_bytes_total{service=~\"$service\"}[5m])) by (service)",
+              "legendFormat": "IN {{service}}",
               "refId": "A"
             },
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "sum(rate(nginx_ingress_controller_response_size_sum[5m])) by (ingress, namespace)",
-              "legendFormat": "OUT {{namespace}}/{{ingress}}",
+              "expr": "sum(rate(traefik_service_responses_bytes_total{service=~\"$service\"}[5m])) by (service)",
+              "legendFormat": "OUT {{service}}",
               "refId": "B"
             }
           ],
@@ -117,17 +120,42 @@ spec:
             "defaults": { "color": { "mode": "palette-classic" }, "unit": "short" },
             "overrides": []
           },
-          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
           "id": 5,
+          "options": {
+            "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }
+          },
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "sum(avg_over_time(nginx_ingress_controller_nginx_process_connections{state=\"active\"}[5m])) by (controller_namespace)",
-              "legendFormat": "Active connections {{controller_namespace}}",
+              "expr": "traefik_open_connections{entrypoint=~\"web|websecure\"}",
+              "legendFormat": "{{entrypoint}} ({{protocol}})",
               "refId": "A"
             }
           ],
-          "title": "Active Connections",
+          "title": "Open Connections",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": { "color": { "mode": "palette-classic" }, "unit": "short" },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+          "id": 6,
+          "options": {
+            "legend": { "calcs": ["last"], "displayMode": "table", "placement": "bottom" }
+          },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "expr": "sum(rate(traefik_entrypoint_requests_total{entrypoint=~\"web|websecure\"}[5m])) by (entrypoint, code)",
+              "legendFormat": "{{entrypoint}} [{{code}}]",
+              "refId": "A"
+            }
+          ],
+          "title": "Entrypoint Request Rate (web / websecure)",
           "type": "timeseries"
         }
       ],
@@ -143,13 +171,31 @@ spec:
             "query": "prometheus",
             "refresh": 1,
             "type": "datasource"
+          },
+          {
+            "current": { "selected": true, "text": "All", "value": "$__all" },
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "definition": "label_values(traefik_service_requests_total{service=~\".+@kubernetes\"}, service)",
+            "hide": 0,
+            "includeAll": true,
+            "label": "Service",
+            "multi": true,
+            "name": "service",
+            "options": [],
+            "query": {
+              "query": "label_values(traefik_service_requests_total{service=~\".+@kubernetes\"}, service)",
+              "refId": "StandardVariableQuery"
+            },
+            "refresh": 2,
+            "sort": 1,
+            "type": "query"
           }
         ]
       },
       "time": { "from": "now-3h", "to": "now" },
       "timepicker": {},
       "timezone": "browser",
-      "title": "Ingress Traffic",
-      "uid": "ingress-traffic-v1",
+      "title": "Traefik Ingress Traffic",
+      "uid": "traefik-traffic-v1",
       "version": 1
     }

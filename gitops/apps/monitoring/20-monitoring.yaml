@@ -36,6 +36,7 @@ spec:
               enabled: true
           additionalDataSources:
             - name: Loki
+              uid: loki
               type: loki
               url: http://loki.observability.svc:3100
               access: proxy

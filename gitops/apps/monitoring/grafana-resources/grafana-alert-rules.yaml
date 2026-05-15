@@ -179,23 +179,23 @@ spec:
   interval: 1m
   rules:
     - uid: high-ingress-error-rate
-      title: "High Ingress Error Rate (5xx)"
+      title: "High Traefik Error Rate (5xx)"
       condition: B
       for: 5m
       labels:
         severity: warning
       annotations:
-        summary: "Wysoki wskaźnik błędów 5xx: {{ $labels.namespace }}/{{ $labels.ingress }}"
-        description: "Ingress {{ $labels.ingress }} ({{ $labels.namespace }}) ma {{ $value | humanizePercentage }} błędów 5xx."
+        summary: "Wysoki wskaźnik błędów 5xx: {{ $labels.service }}"
+        description: "Serwis Traefik {{ $labels.service }} ma ponad 5% błędów 5xx."
       data:
         - refId: A
           datasourceUid: prometheus
           model:
             expr: |
               (
-                sum(rate(nginx_ingress_controller_requests{status=~"5.*"}[5m])) by (ingress, namespace)
+                sum(rate(traefik_service_requests_total{code=~"5..", service=~".+@kubernetes"}[5m])) by (service)
                 /
-                sum(rate(nginx_ingress_controller_requests[5m])) by (ingress, namespace)
+                sum(rate(traefik_service_requests_total{service=~".+@kubernetes"}[5m])) by (service)
               )
             refId: A
             datasource:
@@ -223,21 +223,21 @@ spec:
                   type: and
 
     - uid: ingress-high-latency
-      title: "Ingress High Latency p95"
+      title: "Traefik High Latency p95"
       condition: B
       for: 5m
       labels:
         severity: warning
       annotations:
-        summary: "Wysoka latencja p95: {{ $labels.namespace }}/{{ $labels.ingress }}"
-        description: "Ingress {{ $labels.ingress }} ({{ $labels.namespace }}) ma latencję p95 powyżej 2 sekund."
+        summary: "Wysoka latencja p95: {{ $labels.service }}"
+        description: "Serwis Traefik {{ $labels.service }} ma latencję p95 powyżej 2 sekund."
       data:
         - refId: A
           datasourceUid: prometheus
           model:
             expr: |
               histogram_quantile(0.95,
-                sum(rate(nginx_ingress_controller_request_duration_seconds_bucket[5m])) by (le, ingress, namespace)
+                sum(rate(traefik_service_request_duration_seconds_bucket{service=~".+@kubernetes"}[5m])) by (le, service)
               )
             refId: A
             datasource:
