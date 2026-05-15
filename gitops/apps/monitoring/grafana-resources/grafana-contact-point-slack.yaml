@@ -1,0 +1,32 @@
+# GrafanaContactPoint – gdzie wysyłać alerty (Slack)
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaContactPoint
+metadata:
+  name: slack-contact-point
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  name: Slack
+  type: slack
+  settings:
+    url: ""
+    channel: "#alerts"
+    iconEmoji: ":bell:"
+    title: |
+      [{{ .Status | toUpper }}] {{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})
+    text: |
+      {{ range .Alerts -}}
+      *Namespace:* {{ .Labels.namespace }}
+      *Pod:* {{ .Labels.pod }}{{ if .Labels.ingress }} / *Ingress:* {{ .Labels.ingress }}{{ end }}
+      *Summary:* {{ .Annotations.summary }}
+      *Description:* {{ .Annotations.description }}
+      {{ end }}
+    sendResolved: true
+  valuesFrom:
+    - targetPath: settings.url
+      valueFrom:
+        secretKeyRef:
+          name: alertmanager-slack-webhook
+          key: webhookUrl

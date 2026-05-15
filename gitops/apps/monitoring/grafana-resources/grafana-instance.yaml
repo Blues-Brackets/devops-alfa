@@ -1,0 +1,16 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: kube-prometheus-grafana
+  namespace: observability
+  labels:
+    dashboards: "kube-prometheus-grafana"
+spec:
+  external:
+    url: http://kube-prometheus-stack-grafana.observability.svc:80
+    adminPassword:
+      name: kube-prometheus-stack-grafana
+      key: admin-password
+    adminUser:
+      name: kube-prometheus-stack-grafana
+      key: admin-user

@@ -1,0 +1,361 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: apps-pod-alerts
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  folderRef: folder-applications
+  interval: 1m
+  rules:
+    - uid: pod-crash-looping
+      title: "Pod CrashLooping"
+      condition: B
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Pod crash looping: {{ $labels.namespace }}/{{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} ({{ $labels.container }}) w {{ $labels.namespace }} zrestartował się {{ $value | humanize }} razy w 15 min."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          model:
+            expr: increase(kube_pod_container_status_restarts_total{namespace!~"kube-system|kube-public|argocd|observability"}[15m])
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [3]
+                operator:
+                  type: and
+
+    - uid: pod-not-ready
+      title: "Pod Not Ready"
+      condition: B
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Pod nie gotowy: {{ $labels.namespace }}/{{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} w {{ $labels.namespace }} nie jest w stanie Ready od ponad 10 minut."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          model:
+            expr: kube_pod_status_ready{condition="false", namespace!~"kube-system|kube-public|argocd|observability"}
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0]
+                operator:
+                  type: and
+
+    - uid: pod-oom-killed
+      title: "Pod OOMKilled"
+      condition: B
+      for: 0m
+      labels:
+        severity: critical
+      annotations:
+        summary: "OOMKilled: {{ $labels.namespace }}/{{ $labels.pod }}"
+        description: "Kontener {{ $labels.container }} w {{ $labels.namespace }}/{{ $labels.pod }} został zabity przez OOM killer."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          model:
+            expr: kube_pod_container_status_last_terminated_reason{reason="OOMKilled", namespace!~"kube-system|kube-public|argocd|observability"}
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0]
+                operator:
+                  type: and
+
+    - uid: deployment-unavailable
+      title: "Deployment Unavailable Replicas"
+      condition: B
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Deployment ma niedostępne repliki: {{ $labels.namespace }}/{{ $labels.deployment }}"
+        description: "Deployment {{ $labels.deployment }} w {{ $labels.namespace }} ma {{ $value }} niedostępnych replik od ponad 5 minut."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          model:
+            expr: kube_deployment_status_replicas_unavailable{namespace!~"kube-system|kube-public|argocd|observability"}
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0]
+                operator:
+                  type: and
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: apps-ingress-alerts
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  folderRef: folder-applications
+  interval: 1m
+  rules:
+    - uid: high-ingress-error-rate
+      title: "High Traefik Error Rate (5xx)"
+      condition: B
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Wysoki wskaźnik błędów 5xx: {{ $labels.service }}"
+        description: "Serwis Traefik {{ $labels.service }} ma ponad 5% błędów 5xx."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          model:
+            expr: |
+              (
+                sum(rate(traefik_service_requests_total{code=~"5..", service=~".+@kubernetes"}[5m])) by (service)
+                /
+                sum(rate(traefik_service_requests_total{service=~".+@kubernetes"}[5m])) by (service)
+              )
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0.05]
+                operator:
+                  type: and
+
+    - uid: ingress-high-latency
+      title: "Traefik High Latency p95"
+      condition: B
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Wysoka latencja p95: {{ $labels.service }}"
+        description: "Serwis Traefik {{ $labels.service }} ma latencję p95 powyżej 2 sekund."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          model:
+            expr: |
+              histogram_quantile(0.95,
+                sum(rate(traefik_service_request_duration_seconds_bucket{service=~".+@kubernetes"}[5m])) by (le, service)
+              )
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [2]
+                operator:
+                  type: and
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: apps-resource-alerts
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  folderRef: folder-applications
+  interval: 2m
+  rules:
+    - uid: high-memory-usage
+      title: "High Memory Usage (>90% limit)"
+      condition: B
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Wysokie zużycie pamięci: {{ $labels.namespace }}/{{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} w {{ $labels.namespace }} używa ponad 90% limitu pamięci."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          model:
+            expr: |
+              sum(container_memory_working_set_bytes{container!="", namespace!~"kube-system|kube-public|argocd|observability"}) by (namespace, pod)
+              /
+              sum(kube_pod_container_resource_limits{resource="memory", namespace!~"kube-system|kube-public|argocd|observability"}) by (namespace, pod)
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0.9]
+                operator:
+                  type: and
+
+    - uid: high-cpu-throttling
+      title: "High CPU Throttling (>25%)"
+      condition: B
+      for: 15m
+      labels:
+        severity: warning
+      annotations:
+        summary: "CPU throttling: {{ $labels.namespace }}/{{ $labels.pod }}"
+        description: "Kontener {{ $labels.container }} w {{ $labels.namespace }}/{{ $labels.pod }} jest throttlowany przez ponad 25% czasu."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          model:
+            expr: |
+              rate(container_cpu_cfs_throttled_seconds_total{container!="", namespace!~"kube-system|kube-public|argocd|observability"}[5m])
+              /
+              rate(container_cpu_cfs_periods_total{container!="", namespace!~"kube-system|kube-public|argocd|observability"}[5m])
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0.25]
+                operator:
+                  type: and
