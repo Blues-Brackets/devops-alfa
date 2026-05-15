@@ -72,7 +72,7 @@ spec:
             from: 600
             to: 0
           model:
-            expr: kube_pod_status_ready{condition="false", namespace!~"kube-system|kube-public|argocd|observability"}
+            expr: kube_pod_status_ready{condition="false", namespace!~"kube-system|kube-public|argocd|observability"} == 1 unless on(namespace, pod) kube_pod_status_phase{phase=~"Succeeded|Failed"} == 1
             refId: A
             datasource:
               type: prometheus
@@ -102,7 +102,7 @@ spec:
       title: "Pod OOMKilled"
       condition: B
       execErrState: Alerting
-      noDataState: NoData
+      noDataState: Normal
       for: 0m
       labels:
         severity: critical
@@ -202,7 +202,7 @@ spec:
       title: "High Traefik Error Rate (5xx)"
       condition: B
       execErrState: Alerting
-      noDataState: NoData
+      noDataState: Normal
       for: 5m
       labels:
         severity: warning
@@ -251,7 +251,7 @@ spec:
       title: "Traefik High Latency p95"
       condition: B
       execErrState: Alerting
-      noDataState: NoData
+      noDataState: Normal
       for: 5m
       labels:
         severity: warning
@@ -357,7 +357,7 @@ spec:
       title: "High CPU Throttling (>25%)"
       condition: B
       execErrState: Alerting
-      noDataState: NoData
+      noDataState: Normal
       for: 15m
       labels:
         severity: warning
@@ -397,5 +397,71 @@ spec:
                 evaluator:
                   type: gt
                   params: [0.25]
+                operator:
+                  type: and
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: apps-log-alerts
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  folderRef: folder-applications
+  interval: 1m
+  rules:
+    - uid: log-error-rate
+      title: "Application Log Errors"
+      condition: B
+      execErrState: Alerting
+      noDataState: NoData
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Błędy w logach: {{ $labels.namespace }}/{{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} w {{ $labels.namespace }} zgłasza więcej niż 5 błędów (error/warn) na godzinę."
+      data:
+        - refId: A
+          datasourceUid: P8E80F9AEF21F6940
+          relativeTimeRange:
+            from: 3600
+            to: 0
+          model:
+            refId: A
+            datasource:
+              type: loki
+              uid: P8E80F9AEF21F6940
+            expr: |
+              sum by (namespace, pod) (
+                count_over_time(
+                  {namespace!~"kube-system|kube-public|argocd|observability"}
+                  |~ "(?i)(warn|warning|error|fatal)"
+                  [1h]
+                )
+              )
+        - refId: B
+          datasourceUid: "-100"
+          relativeTimeRange:
+            from: 600
+            to: 0
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [5]
                 operator:
                   type: and
