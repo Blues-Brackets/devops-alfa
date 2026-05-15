@@ -24,6 +24,9 @@ spec:
       data:
         - refId: A
           datasourceUid: prometheus
+          relativeTimeRange:
+            from: 900
+            to: 0
           model:
             expr: increase(kube_pod_container_status_restarts_total{namespace!~"kube-system|kube-public|argocd|observability"}[15m])
             refId: A
@@ -65,6 +68,9 @@ spec:
       data:
         - refId: A
           datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
           model:
             expr: kube_pod_status_ready{condition="false", namespace!~"kube-system|kube-public|argocd|observability"}
             refId: A
@@ -106,6 +112,9 @@ spec:
       data:
         - refId: A
           datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
           model:
             expr: kube_pod_container_status_last_terminated_reason{reason="OOMKilled", namespace!~"kube-system|kube-public|argocd|observability"}
             refId: A
@@ -147,6 +156,9 @@ spec:
       data:
         - refId: A
           datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
           model:
             expr: kube_deployment_status_replicas_unavailable{namespace!~"kube-system|kube-public|argocd|observability"}
             refId: A
@@ -200,6 +212,9 @@ spec:
       data:
         - refId: A
           datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
           model:
             expr: |
               (
@@ -246,6 +261,9 @@ spec:
       data:
         - refId: A
           datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
           model:
             expr: |
               histogram_quantile(0.95,
@@ -302,6 +320,9 @@ spec:
       data:
         - refId: A
           datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
           model:
             expr: |
               sum(container_memory_working_set_bytes{container!="", namespace!~"kube-system|kube-public|argocd|observability"}) by (namespace, pod)
@@ -346,6 +367,9 @@ spec:
       data:
         - refId: A
           datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
           model:
             expr: |
               rate(container_cpu_cfs_throttled_seconds_total{container!="", namespace!~"kube-system|kube-public|argocd|observability"}[5m])
