@@ -24,7 +24,6 @@ spec:
 
         grafana:
           enabled: true
-          adminPassword: changeme
           defaultDashboardsEnabled: true
           persistence:
             type: pvc

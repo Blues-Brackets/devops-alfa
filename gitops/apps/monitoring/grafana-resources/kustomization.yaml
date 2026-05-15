@@ -9,4 +9,5 @@ resources:
   - grafana-alert-rules.yaml
   - grafana-contact-point-slack.yaml
   - grafana-notification-policy.yaml
+  - grafana-sa-token-sealedsecret.yaml
   - alertmanager-slack-webhook-sealedsecret.yaml
