@@ -23,7 +23,7 @@ spec:
         images:
           server:
             repository: ghcr.io/blues-brackets/spedimo/programmer-server
-            tag: sha-5c3cd6a
+            tag: sha-769ff56
             pullPolicy: IfNotPresent
           migrator:
             repository: ghcr.io/blues-brackets/spedimo/programmer-server-migrator
