@@ -13,6 +13,8 @@ spec:
     - uid: pod-crash-looping
       title: "Pod CrashLooping"
       condition: B
+      execErrState: Alerting
+      noDataState: NoData
       for: 5m
       labels:
         severity: warning
@@ -52,6 +54,8 @@ spec:
     - uid: pod-not-ready
       title: "Pod Not Ready"
       condition: B
+      execErrState: Alerting
+      noDataState: NoData
       for: 10m
       labels:
         severity: warning
@@ -91,6 +95,8 @@ spec:
     - uid: pod-oom-killed
       title: "Pod OOMKilled"
       condition: B
+      execErrState: Alerting
+      noDataState: NoData
       for: 0m
       labels:
         severity: critical
@@ -130,6 +136,8 @@ spec:
     - uid: deployment-unavailable
       title: "Deployment Unavailable Replicas"
       condition: B
+      execErrState: Alerting
+      noDataState: NoData
       for: 5m
       labels:
         severity: warning
@@ -181,6 +189,8 @@ spec:
     - uid: high-ingress-error-rate
       title: "High Traefik Error Rate (5xx)"
       condition: B
+      execErrState: Alerting
+      noDataState: NoData
       for: 5m
       labels:
         severity: warning
@@ -225,6 +235,8 @@ spec:
     - uid: ingress-high-latency
       title: "Traefik High Latency p95"
       condition: B
+      execErrState: Alerting
+      noDataState: NoData
       for: 5m
       labels:
         severity: warning
@@ -279,6 +291,8 @@ spec:
     - uid: high-memory-usage
       title: "High Memory Usage (>90% limit)"
       condition: B
+      execErrState: Alerting
+      noDataState: NoData
       for: 10m
       labels:
         severity: warning
@@ -321,6 +335,8 @@ spec:
     - uid: high-cpu-throttling
       title: "High CPU Throttling (>25%)"
       condition: B
+      execErrState: Alerting
+      noDataState: NoData
       for: 15m
       labels:
         severity: warning

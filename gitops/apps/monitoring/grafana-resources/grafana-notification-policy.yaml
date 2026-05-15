@@ -9,7 +9,7 @@ spec:
       dashboards: "kube-prometheus-grafana"
   route:
     receiver: Slack
-    groupBy:
+    group_by:
       - alertname
       - namespace
     groupWait: 30s
