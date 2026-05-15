@@ -1,4 +1,3 @@
-# GrafanaNotificationPolicy – routing alertów do właściwego contact pointa
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaNotificationPolicy
 metadata:
@@ -17,7 +16,6 @@ spec:
     groupInterval: 5m
     repeatInterval: 4h
     routes:
-      # Alerty krytyczne (OOMKill) – bez czekania, natychmiast
       - receiver: Slack
         matchers:
           - "severity = critical"

@@ -11,7 +11,6 @@ spec:
   name: Slack
   type: slack
   settings:
-    # URL webhooka pochodzi z SealedSecret alertmanager-slack-webhook
     url: ""
     channel: "#alerts"
     iconEmoji: ":bell:"
@@ -25,7 +24,6 @@ spec:
       *Description:* {{ .Annotations.description }}
       {{ end }}
     sendResolved: true
-  # Wstrzykuje webhookUrl z Secretu do pola settings.url
   valuesFrom:
     - targetPath: settings.url
       valueFrom:

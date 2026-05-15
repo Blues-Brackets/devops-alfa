@@ -1,16 +1,12 @@
-# Grafana Operator – połączenie z istniejącą Grafaną z kube-prometheus-stack.
-# Operator nie tworzy nowej instancji, tylko zarządza zasobami przez API.
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
   name: kube-prometheus-grafana
   namespace: observability
   labels:
-    # Dashboardy i foldery muszą mieć instanceSelector pasujący do tej etykiety
     dashboards: "kube-prometheus-grafana"
 spec:
   external:
-    # Serwis tworzony przez kube-prometheus-stack
     url: http://kube-prometheus-stack-grafana.observability.svc:80
     adminPassword:
       name: kube-prometheus-stack-grafana
