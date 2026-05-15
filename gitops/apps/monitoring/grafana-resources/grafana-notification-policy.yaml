@@ -12,12 +12,14 @@ spec:
     group_by:
       - alertname
       - namespace
-    groupWait: 30s
-    groupInterval: 5m
-    repeatInterval: 4h
+    group_wait: 30s
+    group_interval: 5m
+    repeat_interval: 4h
     routes:
       - receiver: Slack
         matchers:
-          - "severity = critical"
-        groupWait: 0s
-        repeatInterval: 1h
+          - name: severity
+            value: critical
+            isEqual: true
+        group_wait: 0s
+        repeat_interval: 1h
