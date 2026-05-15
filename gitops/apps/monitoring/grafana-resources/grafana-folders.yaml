@@ -8,14 +8,4 @@ spec:
     matchLabels:
       dashboards: "kube-prometheus-grafana"
   title: "Applications"
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaFolder
-metadata:
-  name: folder-infrastructure
-  namespace: observability
-spec:
-  instanceSelector:
-    matchLabels:
-      dashboards: "kube-prometheus-grafana"
-  title: "Infrastructure"
+  uid: "applications"
