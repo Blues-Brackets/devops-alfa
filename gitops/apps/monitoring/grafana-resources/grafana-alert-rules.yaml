@@ -437,8 +437,9 @@ spec:
             expr: |
               sum by (namespace, pod) (
                 count_over_time(
-                  {namespace!~"kube-system|kube-public|argocd|observability"}
-                  |~ "(?i)(warn|warning|error|fatal)"
+                  {namespace=~".+", namespace!~"kube-system|kube-public|argocd|observability"}
+                  | json
+                  | level=~"warn|warning|error|fatal"
                   [1h]
                 )
               )
