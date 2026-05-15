@@ -4,6 +4,7 @@
 #
 # .env.monitoring must define:
 #   SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+#   GRAFANA_SA_TOKEN=glsa_xxxx  (Grafana Service Account token, role: Admin)
 
 set -euo pipefail
 
@@ -25,6 +26,7 @@ fi
 source "$ENV_FILE"
 
 : "${SLACK_WEBHOOK_URL:?SLACK_WEBHOOK_URL not set in .env.monitoring}"
+: "${GRAFANA_SA_TOKEN:?GRAFANA_SA_TOKEN not set in .env.monitoring}"
 
 echo "==> Fetching sealed-secrets public cert from cluster..."
 kubeseal --fetch-cert \
@@ -40,6 +42,14 @@ kubectl --kubeconfig "$KUBECONFIG" create secret generic alertmanager-slack-webh
   --dry-run=client -o yaml \
 | kubeseal --cert "$CERT_FILE" --format yaml \
 > "$BASE_DIR/grafana-resources/alertmanager-slack-webhook-sealedsecret.yaml"
+
+echo "==> Sealing grafana-sa-token..."
+kubectl --kubeconfig "$KUBECONFIG" create secret generic grafana-sa-token \
+  --namespace="$NAMESPACE" \
+  --from-literal=token="$GRAFANA_SA_TOKEN" \
+  --dry-run=client -o yaml \
+| kubeseal --cert "$CERT_FILE" --format yaml \
+> "$BASE_DIR/grafana-resources/grafana-sa-token-sealedsecret.yaml"
 
 echo "==> Done."
 rm -f "$CERT_FILE"

@@ -8,9 +8,6 @@ metadata:
 spec:
   external:
     url: http://kube-prometheus-stack-grafana.observability.svc:80
-    adminPassword:
-      name: kube-prometheus-stack-grafana
-      key: admin-password
-    adminUser:
-      name: kube-prometheus-stack-grafana
-      key: admin-user
+    apiKey:
+      name: grafana-sa-token
+      key: token
