@@ -4,3 +4,5 @@ resources:
   - 20-monitoring.yaml
   - 21-loki.yaml
   - 22-logs.yaml
+  - 23-grafana-operator.yaml
+  - 24-grafana-dashboards.yaml

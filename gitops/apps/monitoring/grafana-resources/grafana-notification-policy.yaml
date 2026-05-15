@@ -1,0 +1,25 @@
+# GrafanaNotificationPolicy – routing alertów do właściwego contact pointa
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaNotificationPolicy
+metadata:
+  name: notification-policy
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  route:
+    receiver: Slack
+    groupBy:
+      - alertname
+      - namespace
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 4h
+    routes:
+      # Alerty krytyczne (OOMKill) – bez czekania, natychmiast
+      - receiver: Slack
+        matchers:
+          - "severity = critical"
+        groupWait: 0s
+        repeatInterval: 1h

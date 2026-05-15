@@ -1,0 +1,44 @@
+# AlertmanagerConfig definiuje subrouting i receiver dla Slacka.
+# Ważne: to jest pod-routa – Alertmanager automatycznie ją podłącza
+# do głównej trasy na podstawie alertmanagerConfigSelector w 20-monitoring.yaml.
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: slack-receiver
+  namespace: observability
+  labels:
+    alertmanagerConfig: "true"
+spec:
+  route:
+    receiver: slack
+    groupBy: ["alertname", "namespace"]
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 4h
+    matchers:
+      # Pomijamy Watchdog (heartbeat) – nie chcemy powiadomień co minutę
+      - name: alertname
+        matchType: "!="
+        value: "Watchdog"
+      - name: alertname
+        matchType: "!="
+        value: "InfoInhibitor"
+  receivers:
+    - name: slack
+      slackConfigs:
+        - apiURL:
+            name: alertmanager-slack-webhook
+            key: webhookUrl
+          channel: "#alerts"
+          sendResolved: true
+          iconEmoji: ":bell:"
+          title: |-
+            [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})
+          text: |-
+            {{ range .Alerts -}}
+            *Namespace:* {{ .Labels.namespace }}
+            *Pod:* {{ .Labels.pod }}{{ if .Labels.ingress }} / *Ingress:* {{ .Labels.ingress }}{{ end }}
+            *Summary:* {{ .Annotations.summary }}
+            *Description:* {{ .Annotations.description }}
+            {{ end }}
+          titleLink: "https://grafana.alfa.bluesbrackets.com/alerting"
