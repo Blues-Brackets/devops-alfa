@@ -1,0 +1,24 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    logs:
+      access:
+        enabled: true
+        format: json
+
+    metrics:
+      prometheus:
+        addEntryPointsLabels: true
+        addRoutersLabels: true
+        addServicesLabels: true
+        service:
+          enabled: true
+        serviceMonitor:
+          enabled: true
+          namespace: monitoring
+          additionalLabels:
+            release: kube-prometheus-stack
