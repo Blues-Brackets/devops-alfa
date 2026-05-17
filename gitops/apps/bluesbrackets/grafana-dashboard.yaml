@@ -6,7 +6,7 @@ metadata:
 spec:
   instanceSelector:
     matchLabels:
-      dashboards: "kube-prometheus-grafana"
+      dashboards: kube-prometheus-grafana
   resyncPeriod: 30s
   json: |
     {
