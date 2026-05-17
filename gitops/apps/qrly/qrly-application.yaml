@@ -16,7 +16,7 @@ spec:
     helm:
       releaseName: qrly
       valuesObject:
-        imageTag: sha-7c3443c
+        imageTag: sha-b002fb2
         imagePullSecrets: ghcr-credentials
         postgres:
           enabled: false
