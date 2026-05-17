@@ -20,6 +20,5 @@ spec:
         serviceMonitor:
           enabled: true
           namespace: monitoring
-          honorLabels: true
           additionalLabels:
             release: kube-prometheus-stack
