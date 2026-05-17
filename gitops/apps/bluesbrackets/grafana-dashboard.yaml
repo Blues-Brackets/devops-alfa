@@ -12,7 +12,6 @@ spec:
     kind: Dashboard
     metadata:
       name: dashboard-app-overview
-      namespace: observability
       annotations:
         grafana.app/folder: applications
     spec:
