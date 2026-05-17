@@ -5,3 +5,4 @@ resources:
   - bluesbrackets-ghcr-sealed-secret.yaml
   - bluesbrackets-github-token-sealed-secret.yaml
   - bluesbrackets-application.yaml
+  - grafana-dashboard.yaml
