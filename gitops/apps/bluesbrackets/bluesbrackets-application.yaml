@@ -24,8 +24,8 @@ spec:
           pullPolicy: IfNotPresent
         resources:
           limits:
-            cpu: 500m
-            memory: 512Mi
+            cpu: 4
+            memory: 1024Mi
           requests:
             cpu: 100m
             memory: 128Mi
