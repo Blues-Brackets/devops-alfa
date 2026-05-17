@@ -1,13 +1,13 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
-  name: bluesbrackets-dashboard
+  name: dashboard-app-overview
   namespace: observability
 spec:
   instanceSelector:
     matchLabels:
-      dashboards: kube-prometheus-grafana
-  resyncPeriod: 30s
+      dashboards: "kube-prometheus-grafana"
+  folder: "Applications"
   json: |
     {
     "annotations": [
