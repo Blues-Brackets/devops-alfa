@@ -20,7 +20,7 @@ spec:
         imagePullSecrets: ghcr-pull-secret
         image:
           repository: ghcr.io/blues-brackets/bluesbrackets
-          tag: sha-06b4e08
+          tag: sha-45a1d36
           pullPolicy: IfNotPresent
         resources:
           limits:
