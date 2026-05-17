@@ -24,11 +24,11 @@ spec:
           pullPolicy: IfNotPresent
         resources:
           limits:
-            cpu: 4
+            cpu: 200m
             memory: 1024Mi
           requests:
             cpu: 100m
-            memory: 128Mi
+            memory: 512Mi
   destination:
     server: https://kubernetes.default.svc
     namespace: bluesbrackets
