@@ -8,7 +8,7 @@ spec:
   instanceSelector:
     matchLabels:
       dashboards: "kube-prometheus-grafana"
-  name: Slack
+  name: slack
   type: slack
   settings:
     url: "placeholder"
