@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - velero-namespace.yaml
+  - velero-application.yaml
+  - velero-s3-sealed-secret.yaml
+  - velero-schedule.yaml

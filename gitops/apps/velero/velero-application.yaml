@@ -1,0 +1,67 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: velero-chart
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://vmware-tanzu.github.io/helm-charts
+    chart: velero
+    targetRevision: "12.0.1"
+    helm:
+      releaseName: velero
+      valuesObject:
+        # Use the AWS plugin for S3-compatible storage
+        initContainers:
+          - name: velero-plugin-for-aws
+            image: velero/velero-plugin-for-aws:v1.11.0
+            volumeMounts:
+              - mountPath: /target
+                name: plugins
+
+        configuration:
+          defaultBackupTTL: 720h0m0s
+          backupStorageLocation:
+            - name: default
+              provider: aws
+              # --- MinIO (dev/test) — TODO: replace with OVH S3 block below when ready, then delete MinIO app ---
+              bucket: velero-backups
+              default: true
+              config:
+                region: minio # MinIO ignores region but requires a value
+                s3Url: http://minio.minio.svc.cluster.local:9000
+                s3ForcePathStyle: "true"
+              # --- OVH S3 (production) — uncomment and remove MinIO block above ---
+              # bucket: velero-backups  # your OVH bucket name
+              # config:
+              #   region: gra           # gra | waw | de | sbg | uk | bhs
+              #   s3Url: https://s3.gra.cloud.ovh.net
+              #   s3ForcePathStyle: "true"
+
+          volumeSnapshotLocation:
+            - name: default
+              provider: aws
+              config:
+                region: minio
+
+        credentials:
+          useSecret: true
+          existingSecret: velero-s3-credentials
+
+        # Deploy node-agent (formerly restic) for PVC file-system backup
+        deployNodeAgent: true
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: velero
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false

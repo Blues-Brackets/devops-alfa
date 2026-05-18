@@ -1,0 +1,64 @@
+# TODO: MinIO is a temporary S3-compatible storage for Velero backups (dev/test only).
+# Once migrated to OVH S3, this entire app and gitops/apps/minio/ can be deleted.
+# Migration steps: uncomment the OVH block in velero-application.yaml, update .env.velero
+# with OVH credentials, run seal-velero-secrets.sh, remove minio from gitops/base/kustomization.yaml.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio-chart
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.min.io
+    chart: minio
+    targetRevision: "5.4.0"
+    helm:
+      releaseName: minio
+      valuesObject:
+        fullnameOverride: minio
+
+        # Credentials loaded from SealedSecret
+        existingSecret: minio-credentials
+
+        # Single-node mode (no distributed setup needed for dev/backup)
+        mode: standalone
+
+        persistence:
+          enabled: true
+          size: 20Gi
+
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 100m
+
+        # Create the velero bucket on startup
+        buckets:
+          - name: velero-backups
+            policy: none
+            purge: false
+
+        # Expose via ClusterIP only (Velero accesses internally)
+        service:
+          type: ClusterIP
+          port: 9000
+
+        # Console UI (optional, for debugging)
+        consoleService:
+          type: ClusterIP
+          port: 9001
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: minio
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false

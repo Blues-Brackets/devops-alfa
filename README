@@ -29,4 +29,5 @@ kubectl --kubeconfig .kubeconfig get nodes
 kubectl --kubeconfig .kubeconfig get pods -A
 kubectl --kubeconfig .kubeconfig port-forward svc/argocd-server -n argocd 8080:443 --address 0.0.0.0
 kubectl --kubeconfig .kubeconfig -n observability port-forward svc/kube-prometheus-stack-grafana 3000:80 --address 0.0.0.0
+kubectl --kubeconfig .kubeconfig -n minio port-forward svc/minio-console 9001:9001 --address 0.0.0.0
 ```
