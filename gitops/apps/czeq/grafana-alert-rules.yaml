@@ -185,8 +185,8 @@ spec:
         severity: warning
         app: czeq
       annotations:
-        summary: "Błędy w logach: {{ $labels.pod }}"
-        description: "Pod {{ $labels.pod }} w czeq zgłasza więcej niż 5 błędów (error/warn/fatal) na godzinę."
+        summary: "Błędy w logach czeq"
+        description: "Aplikacja czeq zgłasza więcej niż 5 błędów (warn/error/fatal) na godzinę."
       data:
         - refId: A
           datasourceUid: P8E80F9AEF21F6940

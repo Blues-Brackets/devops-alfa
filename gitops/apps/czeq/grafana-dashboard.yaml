@@ -434,11 +434,11 @@ spec:
                         spec:
                           editorMode: code
                           expr: |-
-                            kubelet_volume_stats_used_bytes{namespace="czeq"}
-                            /
-                            kubelet_volume_stats_capacity_bytes{namespace="czeq"}
+                            kubelet_volume_stats_used_bytes{namespace=~"czeq.*"}
+                            / on(namespace, persistentvolumeclaim)
+                            kubelet_volume_stats_capacity_bytes{namespace=~"czeq.*"}
                             * 100
-                          legendFormat: "{{persistentvolumeclaim}}"
+                          legendFormat: "{{namespace}}/{{persistentvolumeclaim}}"
                           range: true
                         version: v0
                       refId: A
