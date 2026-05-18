@@ -409,8 +409,8 @@ spec:
         severity: warning
         app: czeq
       annotations:
-        summary: "PVC prawie pełne: {{ $labels.persistentvolumeclaim }}"
-        description: "Wolumin {{ $labels.persistentvolumeclaim }} w czeq jest zajęty w {{ $value | humanizePercentage }}."
+        summary: "Dysk węzła prawie pełny"
+        description: 'Dysk węzła klastra jest zajęty w {{ $value | printf "%.1f" }}%.'
       data:
         - refId: A
           datasourceUid: prometheus
@@ -419,9 +419,8 @@ spec:
             to: 0
           model:
             expr: |-
-              kubelet_volume_stats_used_bytes{namespace="czeq"}
-              /
-              kubelet_volume_stats_capacity_bytes{namespace="czeq"}
+              (1 - node_filesystem_avail_bytes{mountpoint="/"}
+              / node_filesystem_size_bytes{mountpoint="/"}) * 100
             intervalMs: 1000
             maxDataPoints: 43200
             refId: A
@@ -442,6 +441,6 @@ spec:
                   params: []
                 evaluator:
                   type: gt
-                  params: [0.80]
+                  params: [80]
                 operator:
                   type: and
