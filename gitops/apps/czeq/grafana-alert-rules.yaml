@@ -199,11 +199,13 @@ spec:
               type: loki
               uid: P8E80F9AEF21F6940
             expr: |
-              count_over_time(
-                {namespace=~"czeq.*"}
-                | json
-                | (level=~"warn|warning|error|fatal" or statusCode >= 400)
-                [1h]
+              sum(
+                count_over_time(
+                  {namespace=~"czeq.*"}
+                  | json
+                  | (level=~"warn|warning|error|fatal" or statusCode >= 400)
+                  [1h]
+                )
               )
         - refId: B
           datasourceUid: "-100"
