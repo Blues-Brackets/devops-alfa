@@ -7,7 +7,7 @@ spec:
   instanceSelector:
     matchLabels:
       dashboards: "kube-prometheus-grafana"
-  folderRef: folder-applications
+  folderRef: folder-czeq
   interval: 1m
   rules:
     - uid: czeq-pod-crash-looping
@@ -64,7 +64,7 @@ spec:
   instanceSelector:
     matchLabels:
       dashboards: "kube-prometheus-grafana"
-  folderRef: folder-applications
+  folderRef: folder-czeq
   interval: 2m
   rules:
     - uid: czeq-high-memory-usage
@@ -172,14 +172,14 @@ spec:
   instanceSelector:
     matchLabels:
       dashboards: "kube-prometheus-grafana"
-  folderRef: folder-applications
+  folderRef: folder-czeq
   interval: 1m
   rules:
     - uid: czeq-log-error-rate
       title: "Czeq Application Log Errors"
       condition: B
       execErrState: Alerting
-      noDataState: NoData
+      noDataState: OK
       for: 5m
       labels:
         severity: warning
@@ -240,7 +240,7 @@ spec:
   instanceSelector:
     matchLabels:
       dashboards: "kube-prometheus-grafana"
-  folderRef: folder-applications
+  folderRef: folder-czeq
   interval: 1m
   rules:
     - uid: czeq-high-latency-p99

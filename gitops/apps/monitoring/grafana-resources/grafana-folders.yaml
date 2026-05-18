@@ -9,3 +9,16 @@ spec:
       dashboards: "kube-prometheus-grafana"
   title: "Applications"
   uid: "applications"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaFolder
+metadata:
+  name: folder-czeq
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  title: "czeq"
+  uid: "czeq"
+  parentFolderRef: folder-applications

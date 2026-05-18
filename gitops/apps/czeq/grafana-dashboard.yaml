@@ -38,7 +38,7 @@ spec:
                           expr: |-
                             sum by (code_bucket, service) (
                               label_replace(
-                                rate(traefik_service_requests_total{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[$__rate_interval]),
+                                rate(traefik_service_requests_total{service=~"czeq-${release}-${component}-3000@kubernetes"}[$__rate_interval]),
                                 "code_bucket",
                                 "${1}xx",
                                 "code",
@@ -110,7 +110,8 @@ spec:
                             sum by (pod) (
                               rate(container_cpu_usage_seconds_total{
                                 namespace="czeq",
-                                container!=""
+                                container!="",
+                                pod=~"${release}-${component}-.*"
                               }[$__rate_interval])
                             )
                           legendFormat: "{{pod}}"
@@ -132,7 +133,8 @@ spec:
                               kube_pod_container_resource_limits{
                                 namespace="czeq",
                                 resource="cpu",
-                                container!=""
+                                container!="",
+                                pod=~"${release}-${component}-.*"
                               }
                             )
                           legendFormat: "{{pod}} limit"
@@ -154,7 +156,8 @@ spec:
                               kube_pod_container_resource_requests{
                                 namespace="czeq",
                                 resource="cpu",
-                                container!=""
+                                container!="",
+                                pod=~"${release}-${component}-.*"
                               }
                             )
                           legendFormat: "{{pod}} request"
@@ -217,7 +220,7 @@ spec:
                         kind: DataQuery
                         spec:
                           editorMode: code
-                          expr: sum by (pod) (container_memory_working_set_bytes{namespace="czeq", container!=""})
+                          expr: sum by (pod) (container_memory_working_set_bytes{namespace="czeq", container!="", pod=~"${release}-${component}-.*"})
                           legendFormat: "{{pod}}"
                           range: true
                         version: v0
@@ -237,7 +240,8 @@ spec:
                               kube_pod_container_resource_limits{
                                 namespace="czeq",
                                 resource="memory",
-                                container!=""
+                                container!="",
+                                pod=~"${release}-${component}-.*"
                               }
                             )
                           legendFormat: "{{pod}} limit"
@@ -259,7 +263,8 @@ spec:
                               kube_pod_container_resource_requests{
                                 namespace="czeq",
                                 resource="memory",
-                                container!=""
+                                container!="",
+                                pod=~"${release}-${component}-.*"
                               }
                             )
                           legendFormat: "{{pod}} request"
@@ -327,7 +332,7 @@ spec:
                             histogram_quantile(
                               0.50,
                               sum by (le, service) (
-                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[$__rate_interval])
+                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-${release}-${component}-3000@kubernetes"}[$__rate_interval])
                               )
                             )
                           legendFormat: "{{service}} p50"
@@ -348,7 +353,7 @@ spec:
                             histogram_quantile(
                               0.90,
                               sum by (le, service) (
-                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[$__rate_interval])
+                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-${release}-${component}-3000@kubernetes"}[$__rate_interval])
                               )
                             )
                           legendFormat: "{{service}} p90"
@@ -369,7 +374,7 @@ spec:
                             histogram_quantile(
                               0.99,
                               sum by (le, service) (
-                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[$__rate_interval])
+                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-${release}-${component}-3000@kubernetes"}[$__rate_interval])
                               )
                             )
                           legendFormat: "{{service}} p99"
@@ -444,6 +449,43 @@ spec:
           maxColumnCount: 2
           rowHeightMode: standard
       links: []
+      variables:
+        - kind: QueryVariable
+          spec:
+            name: release
+            label: Release
+            hide: dontHide
+            skipUrlSync: false
+            multi: true
+            includeAll: true
+            allValue: ".*"
+            refresh: onDashboardLoad
+            sort: alphabeticalAsc
+            query:
+              kind: DataQuery
+              spec:
+                expr: 'label_values(kube_pod_info{namespace="czeq"}, label_app_kubernetes_io_instance)'
+              group: prometheus
+              datasource:
+                name: prometheus
+        - kind: QueryVariable
+          spec:
+            name: component
+            label: Component
+            hide: dontHide
+            skipUrlSync: false
+            multi: true
+            includeAll: true
+            allValue: ".*"
+            refresh: onTimeRangeChanged
+            sort: alphabeticalAsc
+            query:
+              kind: DataQuery
+              spec:
+                expr: 'label_values(kube_pod_labels{namespace="czeq", label_app_kubernetes_io_instance=~"$release"}, label_app_kubernetes_io_component)'
+              group: prometheus
+              datasource:
+                name: prometheus
       liveNow: false
       preload: false
       tags: []
