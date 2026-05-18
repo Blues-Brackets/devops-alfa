@@ -13,7 +13,7 @@ spec:
     metadata:
       name: dashboard-czeq-overview
       annotations:
-        grafana.app/folder: applications
+        grafana.app/folder: czeq
     spec:
       cursorSync: "Off"
       editable: true
@@ -38,7 +38,7 @@ spec:
                           expr: |-
                             sum by (code_bucket, service) (
                               label_replace(
-                                rate(traefik_service_requests_total{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[$__rate_interval]),
+                                rate(traefik_service_requests_total{service=~"czeq-czeq-pr-[0-9]+-(backend|cms)-3000@kubernetes"}[$__rate_interval]),
                                 "code_bucket",
                                 "${1}xx",
                                 "code",
@@ -327,7 +327,7 @@ spec:
                             histogram_quantile(
                               0.50,
                               sum by (le, service) (
-                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[$__rate_interval])
+                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-pr-[0-9]+-(backend|cms)-3000@kubernetes"}[$__rate_interval])
                               )
                             )
                           legendFormat: "{{service}} p50"
@@ -348,7 +348,7 @@ spec:
                             histogram_quantile(
                               0.90,
                               sum by (le, service) (
-                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[$__rate_interval])
+                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-pr-[0-9]+-(backend|cms)-3000@kubernetes"}[$__rate_interval])
                               )
                             )
                           legendFormat: "{{service}} p90"
@@ -369,7 +369,7 @@ spec:
                             histogram_quantile(
                               0.99,
                               sum by (le, service) (
-                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[$__rate_interval])
+                                rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-pr-[0-9]+-(backend|cms)-3000@kubernetes"}[$__rate_interval])
                               )
                             )
                           legendFormat: "{{service}} p99"

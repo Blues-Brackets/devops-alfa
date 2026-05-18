@@ -199,13 +199,11 @@ spec:
               type: loki
               uid: P8E80F9AEF21F6940
             expr: |
-              sum by (pod) (
-                count_over_time(
-                  {namespace="czeq"}
-                  | json
-                  | level=~"warn|warning|error|fatal"
-                  [1h]
-                )
+              count_over_time(
+                {namespace="czeq"}
+                | json
+                | level=~"warn|warning|error|fatal"
+                [1h]
               )
         - refId: B
           datasourceUid: "-100"
@@ -264,7 +262,7 @@ spec:
           model:
             expr: |
               histogram_quantile(0.99,
-                sum(rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[5m])) by (le, service)
+                sum(rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-pr-[0-9]+-(backend|cms)-3000@kubernetes"}[5m])) by (le, service)
               )
             refId: A
             datasource:
@@ -311,9 +309,9 @@ spec:
             to: 0
           model:
             expr: |
-              sum(rate(traefik_service_requests_total{code=~"4..", service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[5m])) by (service)
+              sum(rate(traefik_service_requests_total{code=~"4..", service=~"czeq-czeq-pr-[0-9]+-(backend|cms)-3000@kubernetes"}[5m])) by (service)
               /
-              sum(rate(traefik_service_requests_total{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[5m]) > 0) by (service)
+              sum(rate(traefik_service_requests_total{service=~"czeq-czeq-pr-[0-9]+-(backend|cms)-3000@kubernetes"}[5m]) > 0) by (service)
             refId: A
             datasource:
               type: prometheus
@@ -359,9 +357,9 @@ spec:
             to: 0
           model:
             expr: |
-              sum(rate(traefik_service_requests_total{code=~"5..", service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[5m])) by (service)
+              sum(rate(traefik_service_requests_total{code=~"5..", service=~"czeq-czeq-pr-[0-9]+-(backend|cms)-3000@kubernetes"}[5m])) by (service)
               /
-              sum(rate(traefik_service_requests_total{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[5m]) > 0) by (service)
+              sum(rate(traefik_service_requests_total{service=~"czeq-czeq-pr-[0-9]+-(backend|cms)-3000@kubernetes"}[5m]) > 0) by (service)
             refId: A
             datasource:
               type: prometheus
