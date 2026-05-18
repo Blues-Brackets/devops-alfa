@@ -9,3 +9,5 @@ resources:
   - czeq-ingress.yaml
   # - czeq-application.yaml  # disabled until helm/ folder exists in czeq-backend main repo
   - czeq-pr-applicationset.yaml
+  - grafana-dashboard.yaml
+  - grafana-alert-rules.yaml

@@ -1,0 +1,388 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: czeq-pod-alerts
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  folderRef: folder-applications
+  interval: 1m
+  rules:
+    - uid: czeq-pod-crash-looping
+      title: "Czeq Pod CrashLooping"
+      condition: B
+      execErrState: Alerting
+      noDataState: NoData
+      for: 5m
+      labels:
+        severity: warning
+        app: czeq
+      annotations:
+        summary: "Pod crash looping: {{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} ({{ $labels.container }}) w czeq zrestartował się {{ $value | humanize }} razy w 15 min."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          relativeTimeRange:
+            from: 900
+            to: 0
+          model:
+            expr: increase(kube_pod_container_status_restarts_total{namespace="czeq"}[15m])
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [3]
+                operator:
+                  type: and
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: czeq-resource-alerts
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  folderRef: folder-applications
+  interval: 2m
+  rules:
+    - uid: czeq-high-memory-usage
+      title: "Czeq High Memory Usage (>90% limit)"
+      condition: B
+      execErrState: Alerting
+      noDataState: NoData
+      for: 10m
+      labels:
+        severity: warning
+        app: czeq
+      annotations:
+        summary: "Wysokie zużycie pamięci: {{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} w czeq używa ponad 90% limitu pamięci."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
+          model:
+            expr: |
+              sum(container_memory_working_set_bytes{container!="", namespace="czeq"}) by (pod)
+              /
+              sum(kube_pod_container_resource_limits{resource="memory", namespace="czeq"}) by (pod)
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0.9]
+                operator:
+                  type: and
+
+    - uid: czeq-high-cpu-throttling
+      title: "Czeq High CPU Throttling (>25%)"
+      condition: B
+      execErrState: Alerting
+      noDataState: OK
+      for: 15m
+      labels:
+        severity: warning
+        app: czeq
+      annotations:
+        summary: "CPU throttling: {{ $labels.pod }}"
+        description: "Kontener {{ $labels.container }} w czeq/{{ $labels.pod }} jest throttlowany przez ponad 25% czasu."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
+          model:
+            expr: |
+              rate(container_cpu_cfs_throttled_seconds_total{container!="", namespace="czeq"}[5m])
+              /
+              rate(container_cpu_cfs_periods_total{container!="", namespace="czeq"}[5m])
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0.25]
+                operator:
+                  type: and
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: czeq-log-alerts
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  folderRef: folder-applications
+  interval: 1m
+  rules:
+    - uid: czeq-log-error-rate
+      title: "Czeq Application Log Errors"
+      condition: B
+      execErrState: Alerting
+      noDataState: NoData
+      for: 5m
+      labels:
+        severity: warning
+        app: czeq
+      annotations:
+        summary: "Błędy w logach: {{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} w czeq zgłasza więcej niż 5 błędów (error/warn/fatal) na godzinę."
+      data:
+        - refId: A
+          datasourceUid: P8E80F9AEF21F6940
+          relativeTimeRange:
+            from: 3600
+            to: 0
+          model:
+            refId: A
+            datasource:
+              type: loki
+              uid: P8E80F9AEF21F6940
+            expr: |
+              sum by (pod) (
+                count_over_time(
+                  {namespace="czeq"}
+                  | json
+                  | level=~"warn|warning|error|fatal"
+                  [1h]
+                )
+              )
+        - refId: B
+          datasourceUid: "-100"
+          relativeTimeRange:
+            from: 3600
+            to: 0
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [5]
+                operator:
+                  type: and
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: czeq-ingress-alerts
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  folderRef: folder-applications
+  interval: 1m
+  rules:
+    - uid: czeq-high-latency-p99
+      title: "Czeq High Latency p99"
+      condition: B
+      execErrState: Alerting
+      noDataState: OK
+      for: 5m
+      labels:
+        severity: warning
+        app: czeq
+      annotations:
+        summary: "Wysoka latencja p99 w czeq: {{ $labels.service }}"
+        description: "Latencja p99 dla {{ $labels.service }} w czeq przekroczyła 2 sekundy przez ostatnie 5 minut."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
+          model:
+            expr: |
+              histogram_quantile(0.99,
+                sum(rate(traefik_service_request_duration_seconds_bucket{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[5m])) by (le, service)
+              )
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [2]
+                operator:
+                  type: and
+
+    - uid: czeq-high-4xx-rate
+      title: "Czeq High 4xx Error Rate"
+      condition: B
+      execErrState: Alerting
+      noDataState: OK
+      for: 5m
+      labels:
+        severity: warning
+        app: czeq
+      annotations:
+        summary: "Wysoki wskaźnik błędów 4xx w czeq: {{ $labels.service }}"
+        description: "Serwis {{ $labels.service }} w czeq ma ponad 10% odpowiedzi 4xx przez ostatnie 5 minut."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
+          model:
+            expr: |
+              sum(rate(traefik_service_requests_total{code=~"4..", service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[5m])) by (service)
+              /
+              sum(rate(traefik_service_requests_total{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[5m]) > 0) by (service)
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0.1]
+                operator:
+                  type: and
+
+    - uid: czeq-high-5xx-rate
+      title: "Czeq High 5xx Error Rate"
+      condition: B
+      execErrState: Alerting
+      noDataState: OK
+      for: 5m
+      labels:
+        severity: critical
+        app: czeq
+      annotations:
+        summary: "Wysoki wskaźnik błędów 5xx w czeq: {{ $labels.service }}"
+        description: "Serwis {{ $labels.service }} w czeq ma ponad 5% odpowiedzi 5xx przez ostatnie 5 minut."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          relativeTimeRange:
+            from: 600
+            to: 0
+          model:
+            expr: |
+              sum(rate(traefik_service_requests_total{code=~"5..", service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[5m])) by (service)
+              /
+              sum(rate(traefik_service_requests_total{service=~"czeq-czeq-(backend|cms)-3000@kubernetes"}[5m]) > 0) by (service)
+            refId: A
+            datasource:
+              type: prometheus
+              uid: prometheus
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0.05]
+                operator:
+                  type: and
