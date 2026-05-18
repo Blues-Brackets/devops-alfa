@@ -386,3 +386,62 @@ spec:
                   params: [0.05]
                 operator:
                   type: and
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: czeq-storage-alerts
+  namespace: observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "kube-prometheus-grafana"
+  folderRef: folder-czeq
+  interval: 5m
+  rules:
+    - uid: czeq-pvc-high-usage
+      title: "Czeq PVC High Usage"
+      condition: B
+      execErrState: Alerting
+      noDataState: NoData
+      for: 10m
+      labels:
+        severity: warning
+        app: czeq
+      annotations:
+        summary: "PVC prawie pełne: {{ $labels.persistentvolumeclaim }}"
+        description: "Wolumin {{ $labels.persistentvolumeclaim }} w czeq jest zajęty w {{ $value | humanizePercentage }}."
+      data:
+        - refId: A
+          datasourceUid: prometheus
+          relativeTimeRange:
+            from: 300
+            to: 0
+          model:
+            expr: |-
+              kubelet_volume_stats_used_bytes{namespace="czeq"}
+              /
+              kubelet_volume_stats_capacity_bytes{namespace="czeq"}
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: A
+        - refId: B
+          datasourceUid: "-100"
+          model:
+            type: classic_conditions
+            refId: B
+            datasource:
+              type: __expr__
+              uid: "-100"
+            conditions:
+              - type: query
+                query:
+                  params: [A]
+                reducer:
+                  type: last
+                  params: []
+                evaluator:
+                  type: gt
+                  params: [0.80]
+                operator:
+                  type: and
