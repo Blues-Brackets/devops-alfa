@@ -20,11 +20,11 @@ spec:
         imagePullSecrets: ghcr-pull-secret
         image:
           repository: ghcr.io/blues-brackets/bluesbrackets
-          tag: sha-c72d357
+          tag: sha-b829352
           pullPolicy: IfNotPresent
         resources:
           limits:
-            cpu: 200m
+            cpu: 400m
             memory: 1024Mi
           requests:
             cpu: 100m
