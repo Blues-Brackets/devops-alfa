@@ -39,7 +39,7 @@ spec:
                 s3ForcePathStyle: "true"
             - name: remote
               provider: aws
-              bucket: velero-backups
+              bucket: alfa
               credential:
                 name: velero-remote-credentials
                 key: cloud
