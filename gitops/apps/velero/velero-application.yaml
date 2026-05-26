@@ -34,7 +34,7 @@ spec:
                 name: velero-local-credentials
                 key: cloud
               config:
-                region: minio # MinIO ignores region but requires a value
+                region: minio
                 s3Url: http://minio.minio.svc.cluster.local:9000
                 s3ForcePathStyle: "true"
             - name: remote
@@ -62,7 +62,7 @@ spec:
                 name: velero-remote-credentials
                 key: cloud
               config:
-                region: gra
+                region: waw
 
         credentials:
           useSecret: false
