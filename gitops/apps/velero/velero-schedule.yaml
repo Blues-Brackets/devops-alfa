@@ -7,7 +7,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "2"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  schedule: "0 2 * * *" # Every day at 02:00 UTC
+  schedule: "0 2 * * *"
   template:
     includedNamespaces:
       - "*"
@@ -15,8 +15,8 @@ spec:
       - kube-system
       - kube-public
       - kube-node-lease
-    storageLocation: default
+    storageLocation: remote
     volumeSnapshotLocations:
-      - default
-    defaultVolumesToFsBackup: true # Backup PVCs via file-system (restic/kopia)
-    ttl: 720h0m0s # Retain backups for 30 days
+      - remote
+    defaultVolumesToFsBackup: true
+    ttl: 168h0m0s

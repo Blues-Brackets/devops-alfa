@@ -21,11 +21,7 @@ spec:
       releaseName: minio
       valuesObject:
         fullnameOverride: minio
-
-        # Credentials loaded from SealedSecret
         existingSecret: minio-credentials
-
-        # Single-node mode (no distributed setup needed for dev/backup)
         mode: standalone
 
         persistence:
