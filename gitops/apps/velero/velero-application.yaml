@@ -44,8 +44,8 @@ spec:
                 name: velero-remote-credentials
                 key: cloud
               config:
-                region: gra
-                s3Url: https://s3.gra.cloud.ovh.net
+                region: waw
+                s3Url: https://s3.waw.io.cloud.ovh.net/
                 s3ForcePathStyle: "true"
 
           volumeSnapshotLocation:
