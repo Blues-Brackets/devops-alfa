@@ -1,7 +1,3 @@
-# TODO: MinIO is a temporary S3-compatible storage for Velero backups (dev/test only).
-# Once migrated to OVH S3, this entire app and gitops/apps/minio/ can be deleted.
-# Migration steps: uncomment the OVH block in velero-application.yaml, update .env.velero
-# with OVH credentials, run seal-velero-secrets.sh, remove minio from gitops/base/kustomization.yaml.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

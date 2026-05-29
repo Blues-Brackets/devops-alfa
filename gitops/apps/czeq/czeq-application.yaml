@@ -75,7 +75,20 @@ spec:
               packageName: ""
               sha256Fingerprint: ""
           ingress:
-            enabled: false
+            enabled: true
+            className: traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+            hosts:
+              - host: czeq-api.alfa.bluesbrackets.com
+                paths:
+                  - path: /
+                    pathType: Prefix
+            tls:
+              - secretName: czeq-api-tls
+                hosts:
+                  - czeq-api.alfa.bluesbrackets.com
 
         cms:
           replicaCount: 1
@@ -126,7 +139,20 @@ spec:
             ingress:
               enabled: false
           ingress:
-            enabled: false
+            enabled: true
+            className: traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+            hosts:
+              - host: czeq-cms.alfa.bluesbrackets.com
+                paths:
+                  - path: /
+                    pathType: Prefix
+            tls:
+              - secretName: czeq-cms-tls
+                hosts:
+                  - czeq-cms.alfa.bluesbrackets.com
 
   destination:
     server: https://kubernetes.default.svc
