@@ -21,7 +21,7 @@ spec:
           existingSecret: czeq-backend-secret
           image:
             repository: ghcr.io/blues-brackets/czeq-backend/backend
-            tag: master
+            tag: main
             pullPolicy: Always
           service:
             type: ClusterIP
@@ -95,7 +95,7 @@ spec:
           existingSecret: czeq-cms-secret
           image:
             repository: ghcr.io/blues-brackets/czeq-backend/cms
-            tag: master
+            tag: main
             pullPolicy: Always
           service:
             type: ClusterIP
