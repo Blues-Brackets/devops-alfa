@@ -8,17 +8,18 @@ spec:
   instanceSelector:
     matchLabels:
       dashboards: "kube-prometheus-grafana"
-  name: Slack
+  name: slack
   type: slack
   settings:
-    channel: "#alerts"
+    url: "placeholder"
     iconEmoji: ":bell:"
     title: |
       [{{ .Status | toUpper }}] {{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})
     text: |
+      *Namespace:* {{ .CommonLabels.namespace }}
       {{ range .Alerts -}}
-      *Namespace:* {{ .Labels.namespace }}
-      *Pod:* {{ .Labels.pod }}{{ if .Labels.ingress }} / *Ingress:* {{ .Labels.ingress }}{{ end }}
+      {{ if .Labels.pod }}*Pod:* {{ .Labels.pod }}
+      {{ end -}}
       *Summary:* {{ .Annotations.summary }}
       *Description:* {{ .Annotations.description }}
       {{ end }}

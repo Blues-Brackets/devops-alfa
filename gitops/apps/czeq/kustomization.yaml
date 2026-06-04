@@ -6,6 +6,7 @@ resources:
   - czeq-cms-sealed-secret.yaml
   - czeq-ghcr-sealed-secret.yaml
   - czeq-github-token-sealed-secret.yaml
-  - czeq-ingress.yaml
-  # - czeq-application.yaml  # disabled until helm/ folder exists in czeq-backend main repo
+  - czeq-application.yaml  # disabled until helm/ folder exists in czeq-backend main repo
   - czeq-pr-applicationset.yaml
+  - grafana-dashboard.yaml
+  - grafana-alert-rules.yaml

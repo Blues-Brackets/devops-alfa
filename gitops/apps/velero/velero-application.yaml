@@ -1,0 +1,79 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: velero-chart
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://vmware-tanzu.github.io/helm-charts
+    chart: velero
+    targetRevision: "12.0.1"
+    helm:
+      releaseName: velero
+      valuesObject:
+        initContainers:
+          - name: velero-plugin-for-aws
+            image: velero/velero-plugin-for-aws:v1.11.0
+            volumeMounts:
+              - mountPath: /target
+                name: plugins
+
+        configuration:
+          defaultBackupTTL: 720h0m0s
+          backupStorageLocation:
+            - name: local
+              provider: aws
+              bucket: velero-backups
+              default: true
+              credential:
+                name: velero-local-credentials
+                key: cloud
+              config:
+                region: minio
+                s3Url: http://minio.minio.svc.cluster.local:9000
+                s3ForcePathStyle: "true"
+            - name: remote
+              provider: aws
+              bucket: alfa
+              credential:
+                name: velero-remote-credentials
+                key: cloud
+              config:
+                region: waw
+                s3Url: https://s3.waw.io.cloud.ovh.net/
+                s3ForcePathStyle: "true"
+
+          volumeSnapshotLocation:
+            - name: local
+              provider: aws
+              credential:
+                name: velero-local-credentials
+                key: cloud
+              config:
+                region: minio
+            - name: remote
+              provider: aws
+              credential:
+                name: velero-remote-credentials
+                key: cloud
+              config:
+                region: waw
+
+        credentials:
+          useSecret: false
+        deployNodeAgent: true
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: velero
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false

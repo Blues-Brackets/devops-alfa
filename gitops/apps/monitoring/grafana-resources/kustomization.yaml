@@ -4,8 +4,6 @@ resources:
   - grafana-instance.yaml
   - grafana-folders.yaml
   - dashboard-nginx-ingress.yaml
-  - dashboard-app-overview.yaml
-  - grafana-alert-rules.yaml
   - grafana-contact-point-slack.yaml
   - grafana-notification-policy.yaml
   - grafana-sa-token-sealedsecret.yaml

@@ -8,7 +8,7 @@ spec:
     matchLabels:
       dashboards: "kube-prometheus-grafana"
   route:
-    receiver: Slack
+    receiver: slack
     group_by:
       - alertname
       - namespace
@@ -16,10 +16,10 @@ spec:
     group_interval: 5m
     repeat_interval: 4h
     routes:
-      - receiver: Slack
+      - receiver: slack
         matchers:
           - name: severity
             value: critical
             isEqual: true
-        group_wait: 0s
+        group_wait: 10s
         repeat_interval: 1h

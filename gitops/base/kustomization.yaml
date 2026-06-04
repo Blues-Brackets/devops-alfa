@@ -10,3 +10,5 @@ resources:
   - qrly_app.yaml
   - bluesbrackets_app.yaml
   - programmer_app.yaml
+  - minio_app.yaml
+  - velero_app.yaml
