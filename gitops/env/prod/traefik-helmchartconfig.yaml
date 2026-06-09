@@ -23,4 +23,6 @@ spec:
           honorLabels: true
           namespace: observability
           additionalLabels:
-            release: kube-prometheus-stack
+            release: kube-prometheus-stack    
+    service:
+      externalTrafficPolicy: Local
