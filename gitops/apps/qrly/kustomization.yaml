@@ -6,3 +6,4 @@ resources:
   - qrly-ghcr-sealed-secret.yaml
   - qrly-github-token-sealed-secret.yaml
   - qrly-application.yaml
+  - qrly-pr-applicationset.yaml
