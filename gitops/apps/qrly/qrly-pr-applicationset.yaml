@@ -61,9 +61,10 @@ spec:
               replicaCount: 1
       destination:
         server: https://kubernetes.default.svc
-        namespace: qrly
+        namespace: qrly-pr-{{number}}
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
-        syncOptions: []
+        syncOptions:
+          - CreateNamespace=true
