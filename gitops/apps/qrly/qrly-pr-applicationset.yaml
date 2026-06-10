@@ -33,6 +33,8 @@ spec:
             imagePullSecrets: ghcr-credentials
             postgres:
               enabled: true
+            database:
+              ssl: false
             ingress:
               enabled: true
               landingHost: qrly-pr-{{number}}.alfa.bluesbrackets.com
