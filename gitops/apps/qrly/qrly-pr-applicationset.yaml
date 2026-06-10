@@ -41,7 +41,9 @@ spec:
             landing:
               replicaCount: 0
             backend:
-              origin: https://qrly-pr-{{number}}.alfa.bluesbrackets.com
+              origin: https://app.qrly-pr-{{number}}.alfa.bluesbrackets.com
+            frontend:
+              backendUrl: https://api.qrly-pr-{{number}}.alfa.bluesbrackets.com
       destination:
         server: https://kubernetes.default.svc
         namespace: qrly
