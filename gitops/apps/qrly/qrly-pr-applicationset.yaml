@@ -26,20 +26,20 @@ spec:
         repoURL: git@github.com:Blues-Brackets/qrly.git
         targetRevision: "{{head_sha}}"
         path: helm/qrly
-      helm:
-        releaseName: qrly-pr-{{number}}
-        valuesObject:
-          imageTag: "pr-{{number}}"
-          imagePullSecrets: ghcr-credentials
-          postgres:
-            enabled: true
-          ingress:
-            enabled: true
-            landingHost: qrly-pr-{{number}}.alfa.bluesbrackets.com
-            frontendHost: app.qrly-pr-{{number}}.alfa.bluesbrackets.com
-            backendHost: api.qrly-pr-{{number}}.alfa.bluesbrackets.com
-          landing:
-            replicaCount: 0
+        helm:
+          releaseName: qrly-pr-{{number}}
+          valuesObject:
+            imageTag: "pr-{{number}}"
+            imagePullSecrets: ghcr-credentials
+            postgres:
+              enabled: true
+            ingress:
+              enabled: true
+              landingHost: qrly-pr-{{number}}.alfa.bluesbrackets.com
+              frontendHost: app.qrly-pr-{{number}}.alfa.bluesbrackets.com
+              backendHost: api.qrly-pr-{{number}}.alfa.bluesbrackets.com
+            landing:
+              replicaCount: 0
       destination:
         server: https://kubernetes.default.svc
         namespace: qrly
