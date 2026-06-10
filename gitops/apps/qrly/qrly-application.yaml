@@ -24,10 +24,7 @@ spec:
           existingSecret: qrly-database-secret
           existingSecretKey: DATABASE_URL
         ingress:
-          enabled: true
-          landingHost: bitelink.pl
-          frontendHost: app.bitelink.pl
-          backendHost: api.bitelink.pl
+          enabled: false
         landing:
           replicaCount: 0
   destination:
