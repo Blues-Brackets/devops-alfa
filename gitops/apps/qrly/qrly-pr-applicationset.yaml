@@ -40,6 +40,8 @@ spec:
               backendHost: api.qrly-pr-{{number}}.alfa.bluesbrackets.com
             landing:
               replicaCount: 0
+            backend:
+              origin: https://qrly-pr-{{number}}.alfa.bluesbrackets.com
       destination:
         server: https://kubernetes.default.svc
         namespace: qrly
