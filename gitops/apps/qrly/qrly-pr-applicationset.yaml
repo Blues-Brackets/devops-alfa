@@ -26,39 +26,20 @@ spec:
         repoURL: git@github.com:Blues-Brackets/qrly.git
         targetRevision: "{{head_sha}}"
         path: helm/qrly
-        helm:
-          releaseName: qrly-pr-{{number}}
-          valuesObject:
-            imageTag: "pr-{{number}}"
-            imagePullSecrets: ghcr-credentials
-            postgres:
-              enabled: true
-              auth:
-                username: postgres
-                password: ""
-                database: qrly
-              persistence:
-                size: 2Gi
-            database:
-              existingSecret: ""
-              existingSecretKey: ""
-            ingress:
-              enabled: true
-              className: traefik
-              annotations:
-                traefik.ingress.kubernetes.io/router.entrypoints: websecure
-                cert-manager.io/cluster-issuer: letsencrypt-prod
-              hosts:
-                - host: qrly-pr-{{number}}.alfa.bluesbrackets.com
-                  paths:
-                    - path: /
-                      pathType: Prefix
-              tls:
-                - secretName: api-pr-{{number}}-tls
-                  hosts:
-                    - qrly-pr-{{number}}.alfa.bluesbrackets.com
-            landing:
-              replicaCount: 1
+      helm:
+        releaseName: qrly-pr-{{number}}
+        valuesObject:
+          imageTag: "pr-{{number}}"
+          imagePullSecrets: ghcr-credentials
+          postgres:
+            enabled: true
+          ingress:
+            enabled: true
+            landingHost: qrly-pr-{{number}}.alfa.bluesbrackets.com
+            frontendHost: app.qrly-pr-{{number}}.alfa.bluesbrackets.com
+            backendHost: api.qrly-pr-{{number}}.alfa.bluesbrackets.com
+          landing:
+            replicaCount: 0
       destination:
         server: https://kubernetes.default.svc
         namespace: qrly

@@ -6,7 +6,6 @@ resources:
   - cert-manager-app.yaml
   - letsencrypt-clusterissuer.yaml
   - sample-nginx-ingress.yaml
-  - qrly-ingress.yaml
   - bluesbrackets-ingress.yaml
   - argocd-cm-local-user.yaml
   - argocd-rbac-local-admin.yaml
