@@ -27,6 +27,11 @@ spec:
           enabled: false
         landing:
           replicaCount: 0
+        frontend:
+          unavailableRedirectUrl: https://www.orlen.pl/pl/kariera
+          userRegistrationDisabled: "true"
+        backend:
+          userRegistrationDisabled: "true"
   destination:
     server: https://kubernetes.default.svc
     namespace: qrly

@@ -44,9 +44,11 @@ spec:
               replicaCount: 0
             backend:
               origin: https://app.qrly-pr-{{number}}.alfa.bluesbrackets.com
+              userRegistrationDisabled: "false"
             frontend:
               backendUrl: https://api.qrly-pr-{{number}}.alfa.bluesbrackets.com
               unavailableRedirectUrl: https://www.orlen.pl/pl/kariera
+              userRegistrationDisabled: "false"
       destination:
         server: https://kubernetes.default.svc
         namespace: qrly
