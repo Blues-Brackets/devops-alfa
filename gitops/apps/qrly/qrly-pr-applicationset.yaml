@@ -46,6 +46,7 @@ spec:
               origin: https://app.qrly-pr-{{number}}.alfa.bluesbrackets.com
             frontend:
               backendUrl: https://api.qrly-pr-{{number}}.alfa.bluesbrackets.com
+              unavailableRedirectUrl: https://www.orlen.pl/pl/kariera
       destination:
         server: https://kubernetes.default.svc
         namespace: qrly
