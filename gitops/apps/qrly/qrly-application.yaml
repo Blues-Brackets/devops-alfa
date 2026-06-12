@@ -30,6 +30,7 @@ spec:
         frontend:
           unavailableRedirectUrl: https://www.orlen.pl/pl/kariera
           userRegistrationDisabled: "true"
+          tenantWebsite: "orlen.pl"
         backend:
           userRegistrationDisabled: "true"
   destination:
