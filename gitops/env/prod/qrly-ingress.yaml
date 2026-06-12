@@ -24,7 +24,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: landing-service
+                name: qrly-landing-service
                 port:
                   number: 80
     - host: app.bitelink.pl
@@ -34,7 +34,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: frontend-service
+                name: qrly-frontend-service
                 port:
                   number: 80
     - host: api.bitelink.pl
@@ -44,6 +44,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: backend-service
+                name: qrly-backend-service
                 port:
                   number: 80
