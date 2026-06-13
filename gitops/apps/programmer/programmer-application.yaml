@@ -47,6 +47,17 @@ spec:
             logLevel: debug
         web:
           backendUrl: http://programmer-server.programmer.svc.cluster.local
+        ingress:
+          enabled: true
+          serverHost: http://programmer-server.programmer.svc.cluster.local
+          webHost: http://programmer-web.programmer.svc.cluster.local
+          ingressClassName: traefik
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+          tls:
+            - secretName: programmer-tls
+              hosts:
+                - programmer.alfa.bluesbrackets.com
   destination:
     server: https://kubernetes.default.svc
     namespace: programmer
