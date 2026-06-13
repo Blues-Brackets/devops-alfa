@@ -6,4 +6,3 @@ resources:
   - programmer-ghcr-sealed-secret.yaml
   - programmer-github-token-sealed-secret.yaml
   - programmer-application.yaml
-  - programmer-pr-applicationset.yaml
