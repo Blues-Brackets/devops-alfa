@@ -57,7 +57,8 @@ spec:
           tls:
             - secretName: programmer-tls
               hosts:
-                - programmer.alfa.bluesbrackets.com
+                - programmer-server.programmer.svc.cluster.local
+                - programmer-web.programmer.svc.cluster.local
   destination:
     server: https://kubernetes.default.svc
     namespace: programmer
