@@ -49,8 +49,8 @@ spec:
           backendUrl: http://programmer-server.programmer.svc.cluster.local
         ingress:
           enabled: true
-          serverHost: http://programmer-server.programmer.svc.cluster.local
-          webHost: http://programmer-web.programmer.svc.cluster.local
+          serverHost: programmer-server.programmer.svc.cluster.local
+          webHost: programmer-web.programmer.svc.cluster.local
           ingressClassName: traefik
           annotations:
             cert-manager.io/cluster-issuer: letsencrypt-prod
