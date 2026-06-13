@@ -45,6 +45,8 @@ spec:
           replicaCount: 1
           env:
             logLevel: debug
+        web:
+          backendUrl: http://programmer-server.programmer.svc.cluster.local
   destination:
     server: https://kubernetes.default.svc
     namespace: programmer
