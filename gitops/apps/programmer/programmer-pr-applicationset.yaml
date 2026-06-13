@@ -67,7 +67,7 @@ spec:
               webHost: programmer-pr-{{number}}.alfa.bluesbrackets.com
       destination:
         server: https://kubernetes.default.svc
-        namespace: programmer-pr-{{number}}
+        namespace: programmer
       syncPolicy:
         automated:
           prune: true
