@@ -30,7 +30,7 @@ spec:
             tag: sha-a4e3756
             pullPolicy: IfNotPresent
           web:
-            repository: ghcr.io/blues-brackets/spedimo/programmer-server-web
+            repository: ghcr.io/blues-brackets/spedimo/programmer-web
             tag: sha-a4e3756
             pullPolicy: IfNotPresent
         postgresql:
