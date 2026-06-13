@@ -36,15 +36,15 @@ spec:
             images:
               server:
                 repository: ghcr.io/blues-brackets/spedimo/programmer-server
-                tag: "{{head_sha}}"
+                tag: pr-{{number}}
                 pullPolicy: IfNotPresent
               migrator:
                 repository: ghcr.io/blues-brackets/spedimo/programmer-server-migrator
-                tag: "{{head_sha}}"
+                tag: pr-{{number}}
                 pullPolicy: IfNotPresent
               web:
                 repository: ghcr.io/blues-brackets/spedimo/programmer-web
-                tag: "{{head_sha}}"
+                tag: pr-{{number}}
                 pullPolicy: IfNotPresent
             postgresql:
               auth:
