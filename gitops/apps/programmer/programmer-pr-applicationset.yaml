@@ -37,15 +37,15 @@ spec:
               server:
                 repository: ghcr.io/blues-brackets/spedimo/programmer-server
                 tag: pr-{{number}}
-                pullPolicy: IfNotPresent
+                pullPolicy: Always
               migrator:
                 repository: ghcr.io/blues-brackets/spedimo/programmer-server-migrator
                 tag: pr-{{number}}
-                pullPolicy: IfNotPresent
+                pullPolicy: Always
               web:
                 repository: ghcr.io/blues-brackets/spedimo/programmer-web
                 tag: pr-{{number}}
-                pullPolicy: IfNotPresent
+                pullPolicy: Always
             postgresql:
               auth:
                 username: postgres
