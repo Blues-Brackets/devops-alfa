@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: git@github.com:Blues-Brackets/spedimo.git
     path: programmer/helm/programmer-server
-    targetRevision: helm
+    targetRevision: poc
     helm:
       releaseName: programmer-server
       valuesObject:
