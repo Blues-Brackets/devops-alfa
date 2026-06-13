@@ -55,7 +55,7 @@ spec:
           annotations:
             cert-manager.io/cluster-issuer: letsencrypt-prod
           tls:
-            - secretName: programmer-tls
+            - secretName: programmer-tls-2
               hosts:
                 - programmer-server.programmer.svc.cluster.local
                 - programmer-web.programmer.svc.cluster.local
