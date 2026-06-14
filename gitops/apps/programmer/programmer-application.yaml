@@ -46,7 +46,7 @@ spec:
           env:
             logLevel: debug
         web:
-          backendUrl: http://programmer-server.programmer.alfa.bluesbrackets.com
+          backendUrl: https://programmer-server.programmer.alfa.bluesbrackets.com
         ingress:
           enabled: true
           serverHost: programmer-server.programmer.alfa.bluesbrackets.com
