@@ -60,6 +60,12 @@ spec:
               hosts:
                 - programmer-server.programmer.alfa.bluesbrackets.com
                 - programmer-web.programmer.alfa.bluesbrackets.com
+          basicAuth:
+            enabled: true
+            realm: Programmer
+            secret:
+              create: false
+              name: programmer-server-ingress-basic-auth
   destination:
     server: https://kubernetes.default.svc
     namespace: programmer

@@ -5,4 +5,5 @@ resources:
   - programmer-app-sealed-secret.yaml
   - programmer-ghcr-sealed-secret.yaml
   - programmer-github-token-sealed-secret.yaml
+  - programmer-ingress-basic-auth-sealed-secret.yaml
   - programmer-application.yaml

@@ -7,6 +7,8 @@
 #   GHCR_AUTH=<base64 of user:token>  (docker config auth for ghcr.io)
 #   POSTGRES_PASSWORD=...         (must match URL-encoded segment in DATABASE_URL)
 #   DATABASE_URL=postgresql://user:password@programmer-server-postgresql:5432/programmer
+#   INGRESS_BASIC_AUTH_USER=...   (Traefik ingress basic auth username)
+#   INGRESS_BASIC_AUTH_PASSWORD=... (Traefik ingress basic auth password)
 
 set -euo pipefail
 
@@ -25,6 +27,8 @@ if [[ ! -f "$ENV_FILE" ]]; then
   echo "  GHCR_AUTH=<base64 of user:token>"
   echo "  POSTGRES_PASSWORD=..."
   echo "  DATABASE_URL=postgresql://postgres:ENCODED_PASSWORD@programmer-server-postgresql:5432/programmer"
+  echo "  INGRESS_BASIC_AUTH_USER=programmer"
+  echo "  INGRESS_BASIC_AUTH_PASSWORD=..."
   exit 1
 fi
 
@@ -35,6 +39,15 @@ source "$ENV_FILE"
 : "${GHCR_AUTH:?GHCR_AUTH not set in .env.programmer}"
 : "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD not set in .env.programmer}"
 : "${DATABASE_URL:?DATABASE_URL not set in .env.programmer}"
+: "${INGRESS_BASIC_AUTH_USER:?INGRESS_BASIC_AUTH_USER not set in .env.programmer}"
+: "${INGRESS_BASIC_AUTH_PASSWORD:?INGRESS_BASIC_AUTH_PASSWORD not set in .env.programmer}"
+
+if ! command -v htpasswd >/dev/null 2>&1; then
+  echo "ERROR: htpasswd not found (install httpd-tools or apache2-utils)."
+  exit 1
+fi
+
+INGRESS_BASIC_AUTH_USERS="$(htpasswd -nb "$INGRESS_BASIC_AUTH_USER" "$INGRESS_BASIC_AUTH_PASSWORD")"
 
 echo "==> Fetching sealed-secrets public cert from cluster..."
 kubeseal --fetch-cert \
@@ -72,6 +85,17 @@ kubectl --kubeconfig "$KUBECONFIG" create secret generic programmer-server-app \
     --dry-run=client -o yaml \
 | kubeseal --cert "$CERT_FILE" --format yaml \
 > "$BASE_DIR/programmer-app-sealed-secret.yaml"
+
+echo "==> Sealing programmer-server-ingress-basic-auth (namespace: $NAMESPACE)..."
+kubectl --kubeconfig "$KUBECONFIG" create secret generic programmer-server-ingress-basic-auth \
+  --namespace="$NAMESPACE" \
+  --from-literal=users="$INGRESS_BASIC_AUTH_USERS" \
+  --dry-run=client -o yaml \
+| kubectl --kubeconfig "$KUBECONFIG" annotate --local -f - \
+    argocd.argoproj.io/sync-wave=2 \
+    --dry-run=client -o yaml \
+| kubeseal --cert "$CERT_FILE" --format yaml \
+> "$BASE_DIR/programmer-ingress-basic-auth-sealed-secret.yaml"
 
 rm -f "$CERT_FILE"
 echo "==> Done: $BASE_DIR/programmer-*-sealed-secret.yaml"
