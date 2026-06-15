@@ -61,7 +61,7 @@ spec:
                 - programmer-server.programmer.alfa.bluesbrackets.com
                 - programmer-web.programmer.alfa.bluesbrackets.com
           basicAuth:
-            enabled: true
+            enabled: false
             realm: Programmer
             secret:
               create: false
