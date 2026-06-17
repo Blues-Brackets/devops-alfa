@@ -137,7 +137,14 @@ spec:
               type: ClusterIP
               nodePort: null
             ingress:
-              enabled: false
+              enabled: true
+              className: traefik
+              annotations:
+                traefik.ingress.kubernetes.io/router.entrypoints: websecure
+                cert-manager.io/cluster-issuer: letsencrypt-prod
+              host: czeq-minio.alfa.bluesbrackets.com
+              tls:
+                secretName: czeq-minio-tls
           ingress:
             enabled: true
             className: traefik
