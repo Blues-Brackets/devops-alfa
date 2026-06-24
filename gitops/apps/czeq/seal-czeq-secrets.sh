@@ -28,6 +28,9 @@ if [[ ! -f "$ENV_FILE" ]]; then
   echo "  PAYLOAD_SECRET=..."
   echo "  MINIO_ROOT_USER=..."
   echo "  MINIO_ROOT_PASSWORD=..."
+  echo "  ELEVENLABS_API_KEY=..."
+  echo "  ELEVENLABS_VOICE_ID=..."
+  echo "  ELEVENLABS_MODEL_ID=..."
   echo "  GITHUB_TOKEN=ghp_..."
   echo "  GHCR_AUTH=..."
   exit 1
@@ -46,6 +49,9 @@ source "$ENV_FILE"
 : "${PAYLOAD_SECRET:?PAYLOAD_SECRET not set in .env.czeq}"
 : "${MINIO_ROOT_USER:?MINIO_ROOT_USER not set in .env.czeq}"
 : "${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD not set in .env.czeq}"
+: "${ELEVENLABS_API_KEY:?ELEVENLABS_API_KEY not set in .env.czeq}"
+: "${ELEVENLABS_VOICE_ID:?ELEVENLABS_VOICE_ID not set in .env.czeq}"
+: "${ELEVENLABS_MODEL_ID:?ELEVENLABS_MODEL_ID not set in .env.czeq}"
 : "${GITHUB_TOKEN:?GITHUB_TOKEN not set in .env.czeq}"
 : "${GHCR_AUTH:?GHCR_AUTH not set in .env.czeq}"
 
@@ -79,6 +85,9 @@ kubectl --kubeconfig "$KUBECONFIG" create secret generic czeq-cms-secret \
   --from-literal=S3_ACCESS_KEY="$MINIO_ROOT_USER" \
   --from-literal=S3_SECRET_KEY="$MINIO_ROOT_PASSWORD" \
   --from-literal=POSTGRES_PASSWORD="$CMS_DB_PASSWORD" \
+  --from-literal=ELEVENLABS_API_KEY="$ELEVENLABS_API_KEY" \
+  --from-literal=ELEVENLABS_VOICE_ID="$ELEVENLABS_VOICE_ID" \
+  --from-literal=ELEVENLABS_MODEL_ID="$ELEVENLABS_MODEL_ID" \
   --dry-run=client -o yaml \
 | kubeseal --cert "$CERT_FILE" --format yaml \
 > "$BASE_DIR/czeq-cms-sealed-secret.yaml"
