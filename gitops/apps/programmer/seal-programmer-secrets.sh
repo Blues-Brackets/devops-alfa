@@ -90,6 +90,7 @@ kubectl --kubeconfig "$KUBECONFIG" create secret generic programmer-server-app \
   --from-literal=database-url="$DATABASE_URL" \
   --from-literal=postgres-password="$POSTGRES_PASSWORD" \
   --from-literal=better-auth-secret="$BETTER_AUTH_SECRET" \
+  --from-literal=initial-user-email="$INITIAL_USER_EMAIL" \
   --from-literal=initial-user-password="$INITIAL_USER_PASSWORD" \
   --dry-run=client -o yaml \
 | kubectl --kubeconfig "$KUBECONFIG" annotate --local -f - \
