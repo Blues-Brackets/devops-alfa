@@ -46,6 +46,9 @@ spec:
           env:
             logLevel: debug
             origin: https://programmer-web.programmer.alfa.bluesbrackets.com
+            betterAuthUrl: https://programmer-server.programmer.alfa.bluesbrackets.com
+            corsOrigin: https://programmer-web.programmer.alfa.bluesbrackets.com
+            initialUserEmail: admin@spedimo.com
         web:
           backendUrl: https://programmer-server.programmer.alfa.bluesbrackets.com
         ingress:
