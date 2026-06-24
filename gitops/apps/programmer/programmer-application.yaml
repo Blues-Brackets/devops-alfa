@@ -23,15 +23,15 @@ spec:
         images:
           server:
             repository: ghcr.io/blues-brackets/spedimo/programmer-server
-            tag: sha-ea7d63c
+            tag: sha-366a5b7
             pullPolicy: IfNotPresent
           migrator:
             repository: ghcr.io/blues-brackets/spedimo/programmer-server-migrator
-            tag: sha-ea7d63c
+            tag: sha-366a5b7
             pullPolicy: IfNotPresent
           web:
             repository: ghcr.io/blues-brackets/spedimo/programmer-web
-            tag: sha-ea7d63c
+            tag: sha-366a5b7
             pullPolicy: IfNotPresent
         postgresql:
           auth:
