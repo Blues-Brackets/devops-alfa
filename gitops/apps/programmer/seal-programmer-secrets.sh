@@ -11,7 +11,6 @@
 #   INGRESS_BASIC_AUTH_PASSWORD=... (Traefik ingress basic auth password)
 #   BETTER_AUTH_SECRET=...        (secret key for better-auth)
 #   BETTER_AUTH_URL=...           (public URL of the auth server)
-#   INITIAL_USER_EMAIL=...        (email for initial admin user)
 #   INITIAL_USER_PASSWORD=...     (password for initial admin user)
 
 set -euo pipefail
@@ -34,7 +33,6 @@ if [[ ! -f "$ENV_FILE" ]]; then
   echo "  INGRESS_BASIC_AUTH_USER=programmer"
   echo "  INGRESS_BASIC_AUTH_PASSWORD=..."
   echo "  BETTER_AUTH_SECRET=..."
-  echo "  INITIAL_USER_EMAIL=..."
   echo "  INITIAL_USER_PASSWORD=..."
   exit 1
 fi
@@ -49,7 +47,6 @@ source "$ENV_FILE"
 : "${INGRESS_BASIC_AUTH_USER:?INGRESS_BASIC_AUTH_USER not set in .env.programmer}"
 : "${INGRESS_BASIC_AUTH_PASSWORD:?INGRESS_BASIC_AUTH_PASSWORD not set in .env.programmer}"
 : "${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET not set in .env.programmer}"
-: "${INITIAL_USER_EMAIL:?INITIAL_USER_EMAIL not set in .env.programmer}"
 : "${INITIAL_USER_PASSWORD:?INITIAL_USER_PASSWORD not set in .env.programmer}"
 
 if ! command -v htpasswd >/dev/null 2>&1; then
@@ -90,7 +87,6 @@ kubectl --kubeconfig "$KUBECONFIG" create secret generic programmer-server-app \
   --from-literal=database-url="$DATABASE_URL" \
   --from-literal=postgres-password="$POSTGRES_PASSWORD" \
   --from-literal=better-auth-secret="$BETTER_AUTH_SECRET" \
-  --from-literal=initial-user-email="$INITIAL_USER_EMAIL" \
   --from-literal=initial-user-password="$INITIAL_USER_PASSWORD" \
   --dry-run=client -o yaml \
 | kubectl --kubeconfig "$KUBECONFIG" annotate --local -f - \
