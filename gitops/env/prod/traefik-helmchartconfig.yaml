@@ -24,5 +24,12 @@ spec:
           namespace: observability
           additionalLabels:
             release: kube-prometheus-stack    
+    ports:
+      postgres:
+        port: 5432
+        expose:
+          default: true
+        exposedPort: 15432
+        protocol: TCP
     service:
       externalTrafficPolicy: Local
